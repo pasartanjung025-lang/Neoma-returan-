@@ -1,0 +1,8 @@
+{
+  "appId": "com.pasartanjung025.gudangretur",
+  "appName": "Gudang Retur",
+  "webDir": "www",
+  "server": {
+    "androidScheme": "https"
+  }
+}
