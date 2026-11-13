@@ -1,6 +1,6 @@
 {
-  "appId": "com.pasartanjung025.gudangretur",
-  "appName": "Gudang Retur",
+  "appId": "com.pasartanjung025.hppjeans",
+  "appName": "Kalkulator HPP Jeans",
   "webDir": "www",
   "server": {
     "androidScheme": "https"
