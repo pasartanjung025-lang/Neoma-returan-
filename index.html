@@ -774,7 +774,9 @@
               <select id="lainMode" onchange="calculate()">
                 <option value="batch">Borongan (Total Batch)</option>
                 <option value="pcs">Per Pcs</option>
+                <option value="dozen">Per Lusin (otomatis ÷ 12)</option>
               </select>
+              <small id="lainPerPcsHint" style="color:var(--muted);display:block;margin-top:6px">Pilih Per Lusin untuk membagi biaya otomatis menjadi biaya per pcs.</small>
             </div>
           </div>
         </div>
@@ -1154,8 +1156,25 @@
     // 6. Biaya Lainnya
     const lainVal = val('lainVal');
     const lainMode = document.getElementById('lainMode').value;
-    const lainPerPcs = lainMode === 'pcs' ? lainVal : (rawJadi > 0 ? lainVal / pcs : 0);
-    const lainTotal = lainMode === 'pcs' ? lainVal * rawJadi : lainVal;
+    let lainPerPcs = 0;
+    let lainTotal = 0;
+    if (lainMode === 'pcs') {
+      lainPerPcs = lainVal;
+      lainTotal = lainVal * rawJadi;
+    } else if (lainMode === 'dozen') {
+      // Nilai yang dimasukkan adalah biaya untuk 12 pcs; otomatis dibagi 12.
+      lainPerPcs = lainVal / 12;
+      lainTotal = lainPerPcs * rawJadi;
+    } else {
+      lainPerPcs = rawJadi > 0 ? lainVal / pcs : 0;
+      lainTotal = lainVal;
+    }
+    const lainHint = document.getElementById('lainPerPcsHint');
+    if (lainHint) {
+      lainHint.textContent = lainMode === 'dozen'
+        ? `${fmtRp(lainVal)} per lusin = ${fmtRp(lainPerPcs)} per pcs`
+        : (lainMode === 'pcs' ? 'Biaya yang dimasukkan dihitung untuk setiap pcs.' : 'Biaya yang dimasukkan dibagi rata ke seluruh pcs dalam batch.');
+    }
 
     // Total HPP
     const hppPerPcs = kainPerPcs + jahitPerPcs + accPerPcs + cuciPerPcs + finishPerPcs + lainPerPcs;
