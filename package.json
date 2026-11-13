@@ -1,8 +1,8 @@
 {
-  "name": "gudang-retur-android",
+  "name": "kalkulator-hpp-jeans-android",
   "version": "1.0.0",
   "private": true,
-  "description": "Android wrapper build for Gudang Retur PWA",
+  "description": "Android app wrapper for Kalkulator HPP Jeans",
   "scripts": {
     "build": "mkdir -p www && cp index.html manifest.webmanifest sw.js icon.svg www/"
   },
