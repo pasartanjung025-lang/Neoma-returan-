@@ -740,6 +740,7 @@
               <label for="cuciMode">Cara Hitung Cucian</label>
               <select id="cuciMode" onchange="calculate()">
                 <option value="pcs">Per Pcs</option>
+                <option value="dozen">Per Lusin (÷12)</option>
                 <option value="batch">Borongan (Total Batch)</option>
               </select>
             </div>
@@ -1176,8 +1177,8 @@
     // 5. Finishing
     const finishVal = val('finishVal');
     const finishMode = document.getElementById('finishMode').value;
-    const finishPerPcs = finishMode === 'pcs' ? finishVal : (rawJadi > 0 ? finishVal / pcs : 0);
-    const finishTotal = finishMode === 'pcs' ? finishVal * rawJadi : finishVal;
+    const finishPerPcs = finishMode === 'pcs' ? finishVal : (finishMode === 'dozen' ? finishVal / 12 : (rawJadi > 0 ? finishVal / pcs : 0));
+    const finishTotal = finishMode === 'pcs' ? finishVal * rawJadi : (finishMode === 'dozen' ? finishPerPcs * rawJadi : finishVal);
     document.getElementById('badgeFinish').textContent = `${fmtRp(finishPerPcs)} / pcs`;
 
     // 6. Biaya Lainnya
