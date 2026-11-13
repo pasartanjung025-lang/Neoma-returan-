@@ -514,6 +514,15 @@
       font-weight: 800;
     }
 
+    .history-list { display: flex; flex-direction: column; gap: 10px; }
+    .history-empty { color: var(--muted); font-size: .88rem; padding: 8px 2px; }
+    .history-item { display:flex; justify-content:space-between; align-items:center; gap:12px; padding:12px; border:1px solid var(--border); border-radius:9px; background:#f8fafc; }
+    .history-info { min-width:0; }
+    .history-name { font-weight:700; color:var(--text); overflow-wrap:anywhere; }
+    .history-meta { color:var(--muted); font-size:.78rem; margin-top:3px; }
+    .history-values { font-size:.82rem; margin-top:5px; }
+    .history-actions { display:flex; gap:6px; flex-shrink:0; flex-wrap:wrap; }
+    @media (max-width:600px) { .history-item { align-items:flex-start; flex-direction:column; } .history-actions { width:100%; } }
     .hidden { display: none !important; }
 
     .toast {
@@ -551,12 +560,26 @@
       <p>Hitung modal kain, jahit borongan/pcs, aksesoris, cucian, finishing, hingga harga jual bersih setelah pajak.</p>
     </div>
     <div class="header-actions no-print">
+      <button class="btn-light" onclick="saveCalculation()">Simpan Hitungan</button>
       <button class="btn-light" onclick="loadSampleData()">Isi Contoh</button>
       <button class="btn-light" onclick="clearAllData()">Kosongkan</button>
       <button class="btn-light" onclick="copyWhatsApp()">Salin Ringkasan WA</button>
       <button class="btn-light" onclick="window.print()">Cetak / PDF</button>
     </div>
   </header>
+
+  <section class="card history-card">
+    <div class="card-header">
+      <div>
+        <div class="card-title">Riwayat Hitungan Tersimpan</div>
+        <small style="color:var(--muted)">Simpan hasil perhitungan, buka kembali, atau hapus kapan saja.</small>
+      </div>
+      <span class="badge-sub" id="historyCount">0 data</span>
+    </div>
+    <div id="savedCalculations" class="history-list">
+      <p class="history-empty">Belum ada hitungan yang disimpan.</p>
+    </div>
+  </section>
 
   <div class="layout">
     <!-- KOLOM KIRI: INPUT PRODUKSI -->
@@ -1265,6 +1288,96 @@
       pajakMetode: document.getElementById('pajakMetode').value
     };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    return state;
+  }
+
+  const HISTORY_KEY = 'hpp_jeans_saved_calculations_v1';
+
+  function getSavedCalculations() {
+    try {
+      const data = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]');
+      return Array.isArray(data) ? data : [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  function saveCalculation() {
+    calculate();
+    const state = saveState();
+    const name = (state.productName || '').trim() || 'Hitungan Jeans';
+    const record = {
+      id: Date.now(),
+      savedAt: new Date().toISOString(),
+      name,
+      state,
+      hpp: document.getElementById('kpiHppPcs').textContent,
+      laba: document.getElementById('resLabaPcs').textContent,
+      harga: document.getElementById('resHargaJual').textContent
+    };
+    const history = getSavedCalculations();
+    history.unshift(record);
+    localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+    renderSavedCalculations();
+    showToast('Hitungan berhasil disimpan!');
+  }
+
+  function renderSavedCalculations() {
+    const list = document.getElementById('savedCalculations');
+    const history = getSavedCalculations();
+    document.getElementById('historyCount').textContent = history.length + ' data';
+    list.innerHTML = '';
+    if (!history.length) {
+      const empty = document.createElement('p');
+      empty.className = 'history-empty';
+      empty.textContent = 'Belum ada hitungan yang disimpan.';
+      list.appendChild(empty);
+      return;
+    }
+    history.forEach(record => {
+      const item = document.createElement('div');
+      item.className = 'history-item';
+      const info = document.createElement('div');
+      info.className = 'history-info';
+      const title = document.createElement('div');
+      title.className = 'history-name';
+      title.textContent = record.name || 'Hitungan Jeans';
+      const date = document.createElement('div');
+      date.className = 'history-meta';
+      const parsedDate = new Date(record.savedAt);
+      date.textContent = Number.isNaN(parsedDate.getTime()) ? '' : parsedDate.toLocaleString('id-ID');
+      const values = document.createElement('div');
+      values.className = 'history-values';
+      values.textContent = 'HPP/pcs: ' + (record.hpp || '-') + ' · Harga jual: ' + (record.harga || '-') + ' · Laba/pcs: ' + (record.laba || '-');
+      info.append(title, date, values);
+      const actions = document.createElement('div');
+      actions.className = 'history-actions';
+      const openBtn = document.createElement('button');
+      openBtn.type = 'button';
+      openBtn.className = 'btn-primary';
+      openBtn.textContent = 'Buka';
+      openBtn.addEventListener('click', () => {
+        applyState(record.state);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        showToast('Hitungan berhasil dibuka');
+      });
+      const deleteBtn = document.createElement('button');
+      deleteBtn.type = 'button';
+      deleteBtn.className = 'btn-danger-sm';
+      deleteBtn.textContent = 'Hapus';
+      deleteBtn.addEventListener('click', () => deleteSavedCalculation(record.id));
+      actions.append(openBtn, deleteBtn);
+      item.append(info, actions);
+      list.appendChild(item);
+    });
+  }
+
+  function deleteSavedCalculation(id) {
+    if (!confirm('Hapus hitungan ini dari riwayat?')) return;
+    const history = getSavedCalculations().filter(record => record.id !== id);
+    localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+    renderSavedCalculations();
+    showToast('Hitungan dihapus');
   }
 
   function applyState(s) {
@@ -1395,6 +1508,7 @@ Jumlah Jadi: ${qty} pcs
 
   // Init
   (function init() {
+    renderSavedCalculations();
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
       try {
