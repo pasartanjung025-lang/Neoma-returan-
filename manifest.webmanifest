@@ -1,12 +1,12 @@
 {
-  "name": "Gudang Retur Marketplace",
-  "short_name": "Gudang Retur",
+  "name": "Kalkulator HPP Jeans",
+  "short_name": "HPP Jeans",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#f7f8f5",
-  "theme_color": "#174b3c",
+  "background_color": "#f1f5f9",
+  "theme_color": "#1e3a8a",
   "icons": [
     {
       "src": "icon.svg",
