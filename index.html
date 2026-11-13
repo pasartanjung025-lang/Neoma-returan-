@@ -584,6 +584,42 @@
     .diagram-tab { flex:0 0 auto; border:1px solid #dbe3ef; border-radius:999px; padding:8px 12px; background:#f8fafc; color:#475569; font-size:.78rem; font-weight:700; }
     .diagram-tab.active { color:#fff; background:#1e40af; border-color:#1e40af; }
     @media(max-width:480px) { .diagram-overview { gap:12px; } .donut-chart { width:160px; height:160px; flex-basis:160px; } .donut-hole { width:108px; height:108px; } .diagram-detail { min-width:130px; } }
+ 
+    /* Tampilan aplikasi satu layar: tiap menu tampil sendiri, tanpa geser horizontal. */
+    html, body { width:100%; max-width:100%; overflow-x:hidden; }
+    body { padding:8px 8px calc(82px + env(safe-area-inset-bottom)); }
+    .container { width:100%; max-width:760px; }
+    header { padding:13px 14px; margin-bottom:10px; border-radius:12px; }
+    header h1 { font-size:1.08rem; }
+    header p { font-size:.76rem; }
+    .card { padding:13px; margin-bottom:10px; }
+    .card-header { margin-bottom:10px; padding-bottom:8px; }
+    .app-screen { display:none !important; }
+    .app-screen.active { display:block !important; }
+    .app-screen#calculatorSection { display:none !important; }
+    .app-screen#calculatorSection.active { display:grid !important; }
+    .layout { gap:10px; }
+    .sticky-panel { position:static; }
+    .diagram-view-tabs { display:flex; gap:8px; margin:12px 0; padding:4px; border-radius:12px; background:#f1f5f9; }
+    .diagram-view-btn { flex:1; background:transparent; color:#64748b; padding:10px 8px; border-radius:9px; }
+    .diagram-view-btn.active { background:#1e40af; color:#fff; }
+    .graph-heading { font-size:1rem; font-weight:800; color:#1e3a8a; margin:8px 0 3px; }
+    .graph-caption { color:#64748b; font-size:.78rem; margin-bottom:14px; }
+    .diagram-graph-bars { display:flex; flex-direction:column; gap:14px; padding:8px 0 14px; }
+    .graph-row-top { display:flex; justify-content:space-between; align-items:center; gap:8px; font-size:.78rem; margin-bottom:6px; }
+    .graph-row-top strong { color:#1e293b; }
+    .graph-row-top span { color:#475569; text-align:right; }
+    .graph-track { width:100%; height:12px; background:#e2e8f0; border-radius:99px; overflow:hidden; }
+    .graph-fill { height:100%; border-radius:99px; transition:width .25s ease; }
+    @media(max-width:600px) {
+      .grid-2 { grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; }
+      .grid-3 { grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; }
+      .acc-item { grid-template-columns:minmax(0,1fr) minmax(0,1fr); }
+      .acc-item .acc-name { grid-column:1/-1; }
+      .kpi-box { padding:9px; }
+      .kpi-val { font-size:1.05rem; overflow-wrap:anywhere; }
+      .bottom-nav { width:100%; border-radius:14px 14px 0 0; }
+    }
   </style>
 </head>
 <body>
@@ -603,7 +639,7 @@
     </div>
   </header>
 
-  <section class="card history-card" id="historySection">
+  <section class="card history-card app-screen" id="historySection">
     <div class="card-header">
       <div>
         <div class="card-title">Riwayat Hitungan Tersimpan</div>
@@ -616,7 +652,7 @@
     </div>
   </section>
 
-  <div class="layout" id="calculatorSection">
+  <div class="layout app-screen active" id="calculatorSection">
     <!-- KOLOM KIRI: INPUT PRODUKSI -->
     <div>
 
@@ -840,112 +876,6 @@
     <div class="sticky-panel">
 
       <!-- Ringkasan HPP -->
-      <div class="card" id="diagramSection">
-        <div class="card-header">
-          <div class="card-title">Diagram & Ringkasan Modal (HPP)</div>
-          <span class="badge-sub"><span class="pcsCountLbl">0</span> Pcs</span>
-        </div>
-
-        <div class="kpi-grid">
-          <div class="kpi-box dark">
-            <div class="kpi-label">HPP / Modal Per Pcs</div>
-            <div class="kpi-val" id="kpiHppPcs">Rp 0</div>
-          </div>
-          <div class="kpi-box">
-            <div class="kpi-label">Total Modal 1 Batch</div>
-            <div class="kpi-val" id="kpiHppTotal" style="color: var(--primary);">Rp 0</div>
-          </div>
-        </div>
-
-        <div class="diagram-overview">
-          <div class="donut-chart" id="hppDonut" role="img" aria-label="Diagram bulat komposisi biaya HPP">
-            <div class="donut-hole">
-              <small>Total HPP / Pcs</small>
-              <strong id="donutTotal">Rp 0</strong>
-            </div>
-          </div>
-          <div class="diagram-detail">
-            <div class="diagram-detail-title" id="diagramMetricTitle">Kain Jeans</div>
-            <div class="diagram-metric-value" id="diagramMetricPcs">Rp 0</div>
-            <div class="diagram-metric-caption">Biaya per pcs</div>
-            <div class="diagram-metric-row"><span>Total batch</span><strong id="diagramMetricTotal">Rp 0</strong></div>
-            <div class="diagram-metric-row"><span>Persentase HPP</span><strong id="diagramMetricPct">0%</strong></div>
-          </div>
-        </div>
-        <div class="diagram-tabs no-print" role="tablist" aria-label="Kategori diagram HPP">
-          <button type="button" class="diagram-tab active" data-metric="kain" onclick="selectDiagramMetric('kain')">Kain</button>
-          <button type="button" class="diagram-tab" data-metric="jahit" onclick="selectDiagramMetric('jahit')">Jahit</button>
-          <button type="button" class="diagram-tab" data-metric="acc" onclick="selectDiagramMetric('acc')">Aksesoris</button>
-          <button type="button" class="diagram-tab" data-metric="cuci" onclick="selectDiagramMetric('cuci')">Cuci</button>
-          <button type="button" class="diagram-tab" data-metric="finish" onclick="selectDiagramMetric('finish')">Finishing</button>
-          <button type="button" class="diagram-tab" data-metric="lain" onclick="selectDiagramMetric('lain')">Lainnya</button>
-        </div>
-
-        <table class="breakdown-table">
-          <thead>
-            <tr>
-              <th>Komponen Biaya</th>
-              <th class="num">Per Pcs</th>
-              <th class="num">Total Batch</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>1. Kain Jeans</td>
-              <td class="num" id="tblKainPcs">Rp 0</td>
-              <td class="num" id="tblKainTot">Rp 0</td>
-            </tr>
-            <tr>
-              <td>2. Ongkos Jahit</td>
-              <td class="num" id="tblJahitPcs">Rp 0</td>
-              <td class="num" id="tblJahitTot">Rp 0</td>
-            </tr>
-            <tr>
-              <td>3. Aksesoris</td>
-              <td class="num" id="tblAccPcs">Rp 0</td>
-              <td class="num" id="tblAccTot">Rp 0</td>
-            </tr>
-            <tr>
-              <td>4. Ongkos Cucian</td>
-              <td class="num" id="tblCuciPcs">Rp 0</td>
-              <td class="num" id="tblCuciTot">Rp 0</td>
-            </tr>
-            <tr>
-              <td>5. Ongkos Finishing</td>
-              <td class="num" id="tblFinPcs">Rp 0</td>
-              <td class="num" id="tblFinTot">Rp 0</td>
-            </tr>
-            <tr>
-              <td>6. Biaya Lainnya</td>
-              <td class="num" id="tblLainPcs">Rp 0</td>
-              <td class="num" id="tblLainTot">Rp 0</td>
-            </tr>
-            <tr class="total-row">
-              <td>TOTAL HPP</td>
-              <td class="num" id="tblTotalPcs">Rp 0</td>
-              <td class="num" id="tblTotalTot">Rp 0</td>
-            </tr>
-          </tbody>
-        </table>
-
-        <!-- Visual Komposisi Biaya -->
-        <div class="cost-bar">
-          <div id="barKain" style="background: #1e3a8a; width: 0%;"></div>
-          <div id="barJahit" style="background: #3b82f6; width: 0%;"></div>
-          <div id="barAcc" style="background: #06b6d4; width: 0%;"></div>
-          <div id="barCuci" style="background: #10b981; width: 0%;"></div>
-          <div id="barFin" style="background: #f59e0b; width: 0%;"></div>
-          <div id="barLain" style="background: #94a3b8; width: 0%;"></div>
-        </div>
-        <div class="legend">
-          <span><i class="dot" style="background:#1e3a8a"></i>Kain <b id="pctKain">0%</b></span>
-          <span><i class="dot" style="background:#3b82f6"></i>Jahit <b id="pctJahit">0%</b></span>
-          <span><i class="dot" style="background:#06b6d4"></i>Aksesoris <b id="pctAcc">0%</b></span>
-          <span><i class="dot" style="background:#10b981"></i>Cuci <b id="pctCuci">0%</b></span>
-          <span><i class="dot" style="background:#f59e0b"></i>Finish <b id="pctFin">0%</b></span>
-        </div>
-      </div>
-
       <!-- Harga Jual & Pajak -->
       <div class="card">
         <div class="card-header">
@@ -1045,11 +975,130 @@
 </div>
 
 
+<section class="app-screen" id="diagramScreen">
+          <div class="card" id="diagramSection">
+        <div class="card-header">
+          <div class="card-title">Diagram & Ringkasan Modal (HPP)</div>
+          <span class="badge-sub"><span class="pcsCountLbl">0</span> Pcs</span>
+        </div>
+
+        <div class="kpi-grid">
+          <div class="kpi-box dark">
+            <div class="kpi-label">HPP / Modal Per Pcs</div>
+            <div class="kpi-val" id="kpiHppPcs">Rp 0</div>
+          </div>
+          <div class="kpi-box">
+            <div class="kpi-label">Total Modal 1 Batch</div>
+            <div class="kpi-val" id="kpiHppTotal" style="color: var(--primary);">Rp 0</div>
+          </div>
+        </div>
+
+        <div class="diagram-view-tabs no-print" role="tablist" aria-label="Tampilan diagram">
+          <button type="button" class="diagram-view-btn active" id="diagramViewChart" onclick="setDiagramView('chart')">Diagram Bulat</button>
+          <button type="button" class="diagram-view-btn" id="diagramViewGraph" onclick="setDiagramView('graph')">Grafik</button>
+        </div>
+        <div id="diagramChartPanel">
+        <div class="diagram-overview">
+          <div class="donut-chart" id="hppDonut" role="img" aria-label="Diagram bulat komposisi biaya HPP">
+            <div class="donut-hole">
+              <small>Total HPP / Pcs</small>
+              <strong id="donutTotal">Rp 0</strong>
+            </div>
+          </div>
+          <div class="diagram-detail">
+            <div class="diagram-detail-title" id="diagramMetricTitle">Kain Jeans</div>
+            <div class="diagram-metric-value" id="diagramMetricPcs">Rp 0</div>
+            <div class="diagram-metric-caption">Biaya per pcs</div>
+            <div class="diagram-metric-row"><span>Total batch</span><strong id="diagramMetricTotal">Rp 0</strong></div>
+            <div class="diagram-metric-row"><span>Persentase HPP</span><strong id="diagramMetricPct">0%</strong></div>
+          </div>
+        </div>
+        <div class="diagram-tabs no-print" role="tablist" aria-label="Kategori diagram HPP">
+          <button type="button" class="diagram-tab active" data-metric="kain" onclick="selectDiagramMetric('kain')">Kain</button>
+          <button type="button" class="diagram-tab" data-metric="jahit" onclick="selectDiagramMetric('jahit')">Jahit</button>
+          <button type="button" class="diagram-tab" data-metric="acc" onclick="selectDiagramMetric('acc')">Aksesoris</button>
+          <button type="button" class="diagram-tab" data-metric="cuci" onclick="selectDiagramMetric('cuci')">Cuci</button>
+          <button type="button" class="diagram-tab" data-metric="finish" onclick="selectDiagramMetric('finish')">Finishing</button>
+          <button type="button" class="diagram-tab" data-metric="lain" onclick="selectDiagramMetric('lain')">Lainnya</button>
+        </div>
+
+        <table class="breakdown-table">
+          <thead>
+            <tr>
+              <th>Komponen Biaya</th>
+              <th class="num">Per Pcs</th>
+              <th class="num">Total Batch</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1. Kain Jeans</td>
+              <td class="num" id="tblKainPcs">Rp 0</td>
+              <td class="num" id="tblKainTot">Rp 0</td>
+            </tr>
+            <tr>
+              <td>2. Ongkos Jahit</td>
+              <td class="num" id="tblJahitPcs">Rp 0</td>
+              <td class="num" id="tblJahitTot">Rp 0</td>
+            </tr>
+            <tr>
+              <td>3. Aksesoris</td>
+              <td class="num" id="tblAccPcs">Rp 0</td>
+              <td class="num" id="tblAccTot">Rp 0</td>
+            </tr>
+            <tr>
+              <td>4. Ongkos Cucian</td>
+              <td class="num" id="tblCuciPcs">Rp 0</td>
+              <td class="num" id="tblCuciTot">Rp 0</td>
+            </tr>
+            <tr>
+              <td>5. Ongkos Finishing</td>
+              <td class="num" id="tblFinPcs">Rp 0</td>
+              <td class="num" id="tblFinTot">Rp 0</td>
+            </tr>
+            <tr>
+              <td>6. Biaya Lainnya</td>
+              <td class="num" id="tblLainPcs">Rp 0</td>
+              <td class="num" id="tblLainTot">Rp 0</td>
+            </tr>
+            <tr class="total-row">
+              <td>TOTAL HPP</td>
+              <td class="num" id="tblTotalPcs">Rp 0</td>
+              <td class="num" id="tblTotalTot">Rp 0</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- Visual Komposisi Biaya -->
+        <div class="cost-bar">
+          <div id="barKain" style="background: #1e3a8a; width: 0%;"></div>
+          <div id="barJahit" style="background: #3b82f6; width: 0%;"></div>
+          <div id="barAcc" style="background: #06b6d4; width: 0%;"></div>
+          <div id="barCuci" style="background: #10b981; width: 0%;"></div>
+          <div id="barFin" style="background: #f59e0b; width: 0%;"></div>
+          <div id="barLain" style="background: #94a3b8; width: 0%;"></div>
+        </div>
+        <div class="legend">
+          <span><i class="dot" style="background:#1e3a8a"></i>Kain <b id="pctKain">0%</b></span>
+          <span><i class="dot" style="background:#3b82f6"></i>Jahit <b id="pctJahit">0%</b></span>
+          <span><i class="dot" style="background:#06b6d4"></i>Aksesoris <b id="pctAcc">0%</b></span>
+          <span><i class="dot" style="background:#10b981"></i>Cuci <b id="pctCuci">0%</b></span>
+          <span><i class="dot" style="background:#f59e0b"></i>Finish <b id="pctFin">0%</b></span>
+        </div>
+        </div>
+        <div id="diagramGraphPanel" class="hidden">
+          <div class="graph-heading">Grafik Perbandingan Biaya per Pcs</div>
+          <p class="graph-caption">Panjang batang menunjukkan persentase setiap komponen dari total HPP.</p>
+          <div id="diagramGraphBars" class="diagram-graph-bars"></div>
+        </div>
+      </div>
+  </section>
+
 <nav class="bottom-nav no-print" aria-label="Navigasi utama">
   <button type="button" class="active" data-target="calculatorSection" onclick="navigateBottom('calculatorSection', this)">
     <span class="nav-icon">🧮</span><span>Hitung</span>
   </button>
-  <button type="button" data-target="diagramSection" onclick="navigateBottom('diagramSection', this)">
+  <button type="button" data-target="diagramScreen" onclick="navigateBottom('diagramScreen', this)">
     <span class="nav-icon">📊</span><span>Diagram</span>
   </button>
   <button type="button" data-target="historySection" onclick="navigateBottom('historySection', this)">
@@ -1064,8 +1113,17 @@
   function navigateBottom(targetId, button) {
     const target = document.getElementById(targetId);
     if (!target) return;
-    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    document.querySelectorAll('.app-screen').forEach(screen => screen.classList.toggle('active', screen === target));
     document.querySelectorAll('.bottom-nav button').forEach(item => item.classList.toggle('active', item === button));
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }
+
+  function setDiagramView(view) {
+    const chart = view === 'chart';
+    document.getElementById('diagramChartPanel').classList.toggle('hidden', !chart);
+    document.getElementById('diagramGraphPanel').classList.toggle('hidden', chart);
+    document.getElementById('diagramViewChart').classList.toggle('active', chart);
+    document.getElementById('diagramViewGraph').classList.toggle('active', !chart);
   }
 
   const STORAGE_KEY = 'hpp_jeans_calculator_v1';
@@ -1223,6 +1281,13 @@
     document.getElementById('diagramMetricPcs').textContent = fmtRp(selected.pcs);
     document.getElementById('diagramMetricTotal').textContent = fmtRp(selected.total);
     document.getElementById('diagramMetricPct').textContent = fmtNum(selected.pct, 1) + '%';
+    const graph = document.getElementById('diagramGraphBars');
+    if (graph) {
+      graph.innerHTML = metrics.map((m, i) => {
+        const width = Math.max(0, Math.min(100, m.pct));
+        return '<div class="graph-row"><div class="graph-row-top"><strong>' + m.name + '</strong><span>' + fmtRp(m.pcs) + ' · ' + fmtNum(m.pct, 1) + '%</span></div><div class="graph-track"><div class="graph-fill" style="width:' + width + '%;background:' + colors[i] + '"></div></div></div>';
+      }).join('');
+    }
   }
 
   function calculate() {
