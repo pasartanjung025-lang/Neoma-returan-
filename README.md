@@ -1,18 +1,22 @@
-# Gudang Retur Marketplace
+# Kalkulator HPP & Harga Jual Jeans
 
-Aplikasi PWA untuk mencocokkan paket retur marketplace dengan data Pixel.
+Aplikasi kalkulator biaya produksi jeans untuk menghitung HPP per pcs dan per batch, simulasi harga jual, pajak, serta laba.
 
-## Fitur
-- Database awal berisi 37 Order ID unik dari data Pixel.
-- Pencocokan nomor pesanan atau resi melalui input manual dan kamera barcode.
-- Impor Excel/CSV dengan kolom Order ID dan Tracking ID/resi.
-- Riwayat retur, status selesai, pencarian, dan ekspor CSV.
-- Penyimpanan lokal pada browser dan cache offline dasar.
+## Fitur dari aplikasi
+- Rincian biaya kain, jahit, aksesori, cucian, finishing, dan biaya lainnya.
+- Perhitungan biaya per pcs dan total batch.
+- Mode harga jual manual atau berdasarkan target laba.
+- Perhitungan pajak dan laba bersih.
+- Muat contoh data, kosongkan formulir, cetak/simpan PDF, dan salin ringkasan untuk WhatsApp.
+- Penyimpanan otomatis lokal di perangkat/browser.
 
-## Publikasi
-Workflow GitHub Actions pada `.github/workflows/pages.yml` menerbitkan aplikasi ke GitHub Pages setiap ada push ke branch `main`.
+## Build APK Android
+Setiap push ke branch `main` yang mengubah file aplikasi akan menjalankan GitHub Actions untuk membangun APK debug. Jalankan manual melalui tab **Actions → Build Kalkulator HPP Jeans APK → Run workflow** bila diperlukan.
 
-Di GitHub buka **Settings → Pages**, lalu pilih **GitHub Actions** sebagai Source bila diminta. Setelah workflow berhasil, buka `https://pasartanjung025-lang.github.io/Neoma-returan-/` melalui Chrome Android, lalu pilih **Tambahkan ke layar utama / Instal aplikasi**.
+Setelah workflow selesai, buka hasil run dan unduh artifact **Kalkulator-HPP-Jeans-Android-APK**. Ekstrak ZIP lalu instal file `app-debug.apk` di Android. Android mungkin meminta izin **Install unknown apps** untuk browser atau file manager yang digunakan.
+
+## GitHub Pages
+Workflow `.github/workflows/pages.yml` menerbitkan aplikasi web ke GitHub Pages. Aktifkan **Settings → Pages → Source: GitHub Actions** jika belum aktif.
 
 ## Catatan
-Aplikasi ini PWA yang dipasang dari Chrome, bukan APK native. Kamera memerlukan HTTPS dan izin dari pengguna. Impor Excel menggunakan SheetJS CDN sehingga membutuhkan internet saat mengunggah Excel. Data tersimpan lokal di browser/perangkat.
+Data kalkulasi disimpan di penyimpanan lokal perangkat/browser. Menghapus data aplikasi/browser dapat menghapus data tersimpan. APK debug ditandatangani untuk pengujian/pemasangan langsung, bukan rilis Play Store.
