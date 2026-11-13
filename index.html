@@ -595,6 +595,9 @@
     .card { padding:13px; margin-bottom:10px; }
     .card-header { margin-bottom:10px; padding-bottom:8px; }
     .app-screen { display:none !important; }
+    /* Ringkasan HPP tetap menyatu dengan halaman Hitung, tetapi tidak ikut tampil di halaman lain. */
+    .main-hpp-summary { display:none; }
+    .main-hpp-summary.active { display:block; }
     .app-screen.active { display:block !important; }
     .app-screen#calculatorSection { display:none !important; }
     .app-screen#calculatorSection.active { display:grid !important; }
@@ -973,7 +976,7 @@
     </div>
   </div>
 
-<div class="sticky-panel main-hpp-summary">
+<div class="sticky-panel main-hpp-summary active">
 <div class="card" id="diagramSection">
         <div class="card-header">
           <div class="card-title">Diagram & Ringkasan Modal (HPP)</div>
@@ -1233,6 +1236,8 @@
     const target = document.getElementById(targetId);
     if (!target) return;
     document.querySelectorAll('.app-screen').forEach(screen => screen.classList.toggle('active', screen === target));
+    const mainSummary = document.querySelector('.main-hpp-summary');
+    if (mainSummary) mainSummary.classList.toggle('active', targetId === 'calculatorSection');
     document.querySelectorAll('.bottom-nav button').forEach(item => item.classList.toggle('active', item === button));
     window.scrollTo({ top: 0, behavior: 'instant' });
   }
