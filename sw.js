@@ -1,4 +1,4 @@
-const CACHE = 'hpp-jeans-v3';
+const CACHE = 'hpp-jeans-v4';
 const FILES = ['./', './index.html', './manifest.webmanifest', './icon.svg'];
 
 self.addEventListener('install', event => {
