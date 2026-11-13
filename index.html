@@ -939,6 +939,17 @@
           </div>
         </div>
 
+        <div class="grid-2">
+          <div class="field">
+            <label for="salesPackingPcs">Biaya Packing / Pcs (Rp)</label>
+            <div class="input-group"><span class="prefix">Rp</span><input type="text" inputmode="decimal" id="salesPackingPcs" class="has-prefix" value="0" onfocus="moveCursorToEnd(this)" oninput="calculate()" /></div>
+          </div>
+          <div class="field">
+            <label for="salesReturPct">Estimasi Persentase Retur (%)</label>
+            <div class="input-group"><input type="text" inputmode="decimal" id="salesReturPct" class="has-suffix" value="0" onfocus="moveCursorToEnd(this)" oninput="calculate()" /><span class="suffix">%</span></div>
+          </div>
+        </div>
+
         <!-- Hasil Perhitungan Penjualan -->
         <div class="result-box profit" id="resultBox">
           <div class="result-row">
@@ -1219,17 +1230,7 @@
       <div class="card-title">Diagram Penjualan & Estimasi Retur</div>
       <span class="badge-sub">Per pcs</span>
     </div>
-    <p class="graph-caption" style="margin-bottom:12px;">Masukkan biaya packing per pcs dan perkiraan persentase retur. Diagram otomatis mengikuti harga jual dan pajak.</p>
-    <div class="grid-2" style="margin-bottom:14px;">
-      <div class="field">
-        <label for="salesPackingPcs">Biaya Packing / Pcs (Rp)</label>
-        <div class="input-group"><span class="prefix">Rp</span><input type="text" inputmode="decimal" id="salesPackingPcs" class="has-prefix" value="0" onfocus="moveCursorToEnd(this)" oninput="calculate()" /></div>
-      </div>
-      <div class="field">
-        <label for="salesReturPct">Estimasi Persentase Retur (%)</label>
-        <div class="input-group"><input type="text" inputmode="decimal" id="salesReturPct" class="has-suffix" value="0" onfocus="moveCursorToEnd(this)" oninput="calculate()" /><span class="suffix">%</span></div>
-      </div>
-    </div>
+    <p class="graph-caption" style="margin-bottom:12px;">Nilai packing dan persentase retur diatur dari menu Hitung. Diagram ini mengikuti perhitungan terbaru secara otomatis.</p>
     <div class="kpi-grid" style="margin-bottom:12px;">
       <div class="kpi-box"><div class="kpi-label">Estimasi Biaya Retur / Pcs</div><div class="kpi-val" id="salesReturCost">Rp 0</div></div>
       <div class="kpi-box dark"><div class="kpi-label">Estimasi Laba Setelah Packing & Retur</div><div class="kpi-val" id="salesProfitAfter">Rp 0</div></div>
@@ -1732,7 +1733,10 @@
       netSales = dpp;
     }
 
-    const labaPcs = netSales - hppPerPcs;
+    const packingPerPcs = Math.max(0, val('salesPackingPcs'));
+    const returPct = Math.max(0, Math.min(100, val('salesReturPct')));
+    const returCostPerPcs = hargaJual * returPct / 100;
+    const labaPcs = netSales - hppPerPcs - packingPerPcs - returCostPerPcs;
     const labaTotal = labaPcs * rawJadi;
     const omzetKotor = hargaJual * rawJadi;
     const pajakTotal = pajakRp * rawJadi;
@@ -1753,10 +1757,6 @@
     document.getElementById('resPajakTotal').textContent = fmtRp(pajakTotal);
 
     // Diagram penjualan: packing terpisah dan estimasi retur dihitung dari harga jual.
-    const packingPerPcs = Math.max(0, val('salesPackingPcs'));
-    const returPct = Math.max(0, Math.min(100, val('salesReturPct')));
-    const returCostPerPcs = hargaJual * returPct / 100;
-    const profitAfterPackingReturn = netSales - hppPerPcs - packingPerPcs - returCostPerPcs;
     renderSalesDiagram({
       price: hargaJual,
       tax: pajakRp,
@@ -1764,7 +1764,7 @@
       returnPct: returPct,
       returns: returCostPerPcs,
       hpp: hppPerPcs,
-      profit: profitAfterPackingReturn
+      profit: labaPcs
     });
 
     const resBox = document.getElementById('resultBox');
