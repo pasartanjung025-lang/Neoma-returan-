@@ -1,4 +1,4 @@
-const CACHE = 'hpp-jeans-v11';
+const CACHE = 'hpp-jeans-v12';
 const FILES = ['./', './index.html', './manifest.webmanifest', './icon.svg', './neoma-icon.jpg'];
 
 self.addEventListener('install', event => {
