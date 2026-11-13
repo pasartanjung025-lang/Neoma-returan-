@@ -545,7 +545,7 @@
 
     @media print {
       body { background: #fff; padding: 0; }
-      header, .no-print { display: none !important; }
+      .header-actions, .no-print { display: none !important; }
       .layout { grid-template-columns: 1fr 1fr; }
       .card { break-inside: avoid; box-shadow: none; }
     }
@@ -614,6 +614,13 @@
     .graph-row-top span { color:#475569; text-align:right; }
     .graph-track { width:100%; height:12px; background:#e2e8f0; border-radius:99px; overflow:hidden; }
     .graph-fill { height:100%; border-radius:99px; transition:width .25s ease; }
+    @media print {
+      .app-screen.active { display:block !important; }
+      .app-screen#calculatorSection.active { display:grid !important; }
+      .main-hpp-summary.active { display:block !important; }
+      body { padding:0 !important; }
+      .card { break-inside:avoid; }
+    }
     @media(max-width:600px) {
       .grid-2 { grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; }
       .grid-3 { grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; }
@@ -638,7 +645,7 @@
       <button class="btn-light" onclick="loadSampleData()">Isi Contoh</button>
       <button class="btn-light" onclick="clearAllData()">Kosongkan</button>
       <button class="btn-light" onclick="copyWhatsApp()">Salin Ringkasan WA</button>
-      <button class="btn-light" onclick="window.print()">Cetak / PDF</button>
+      <button class="btn-light" onclick="printOrSavePdf()">Cetak / PDF</button>
     </div>
   </header>
 
@@ -2002,6 +2009,17 @@
       salesReturPct: 0
     });
     showToast('Data dikosongkan');
+  }
+
+  // Cetak lewat PrintManager Android agar bisa memilih Simpan sebagai PDF dan folder tujuan.
+  function printOrSavePdf() {
+    calculate();
+    saveState();
+    if (window.NeomaPdf && typeof window.NeomaPdf.print === 'function') {
+      window.NeomaPdf.print();
+      return;
+    }
+    window.print();
   }
 
   function copyWhatsApp() {
