@@ -569,6 +569,21 @@
     .bottom-nav button .nav-icon { font-size:1.25rem; line-height:1.2; }
     .bottom-nav button.active { background:#eff6ff; color:#1e40af; }
     @media print { .bottom-nav { display:none !important; } body { padding-bottom:0; } }
+
+    .diagram-overview { display:flex; align-items:center; justify-content:center; gap:22px; padding:18px 8px 12px; flex-wrap:wrap; }
+    .donut-chart { width:190px; height:190px; flex:0 0 190px; border-radius:50%; display:grid; place-items:center; background:conic-gradient(#1e3a8a 0% 100%); position:relative; box-shadow:0 5px 18px rgba(30,58,138,.12); }
+    .donut-hole { width:126px; height:126px; border-radius:50%; background:#fff; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:8px; text-align:center; box-shadow:inset 0 0 0 1px #e2e8f0; }
+    .donut-hole small { color:#64748b; font-size:.72rem; }
+    .donut-hole strong { color:#172554; font-size:1rem; overflow-wrap:anywhere; }
+    .diagram-detail { flex:1; min-width:160px; }
+    .diagram-detail-title { font-size:1rem; font-weight:800; color:#1e3a8a; }
+    .diagram-metric-value { font-size:1.35rem; font-weight:900; color:#0f172a; margin-top:5px; }
+    .diagram-metric-caption { color:#64748b; font-size:.78rem; margin-bottom:12px; }
+    .diagram-metric-row { display:flex; justify-content:space-between; gap:8px; padding:7px 0; border-top:1px solid #e2e8f0; font-size:.82rem; }
+    .diagram-tabs { display:flex; gap:7px; overflow-x:auto; padding:6px 0 14px; scrollbar-width:thin; }
+    .diagram-tab { flex:0 0 auto; border:1px solid #dbe3ef; border-radius:999px; padding:8px 12px; background:#f8fafc; color:#475569; font-size:.78rem; font-weight:700; }
+    .diagram-tab.active { color:#fff; background:#1e40af; border-color:#1e40af; }
+    @media(max-width:480px) { .diagram-overview { gap:12px; } .donut-chart { width:160px; height:160px; flex-basis:160px; } .donut-hole { width:108px; height:108px; } .diagram-detail { min-width:130px; } }
   </style>
 </head>
 <body>
@@ -840,6 +855,30 @@
             <div class="kpi-label">Total Modal 1 Batch</div>
             <div class="kpi-val" id="kpiHppTotal" style="color: var(--primary);">Rp 0</div>
           </div>
+        </div>
+
+        <div class="diagram-overview">
+          <div class="donut-chart" id="hppDonut" role="img" aria-label="Diagram bulat komposisi biaya HPP">
+            <div class="donut-hole">
+              <small>Total HPP / Pcs</small>
+              <strong id="donutTotal">Rp 0</strong>
+            </div>
+          </div>
+          <div class="diagram-detail">
+            <div class="diagram-detail-title" id="diagramMetricTitle">Kain Jeans</div>
+            <div class="diagram-metric-value" id="diagramMetricPcs">Rp 0</div>
+            <div class="diagram-metric-caption">Biaya per pcs</div>
+            <div class="diagram-metric-row"><span>Total batch</span><strong id="diagramMetricTotal">Rp 0</strong></div>
+            <div class="diagram-metric-row"><span>Persentase HPP</span><strong id="diagramMetricPct">0%</strong></div>
+          </div>
+        </div>
+        <div class="diagram-tabs no-print" role="tablist" aria-label="Kategori diagram HPP">
+          <button type="button" class="diagram-tab active" data-metric="kain" onclick="selectDiagramMetric('kain')">Kain</button>
+          <button type="button" class="diagram-tab" data-metric="jahit" onclick="selectDiagramMetric('jahit')">Jahit</button>
+          <button type="button" class="diagram-tab" data-metric="acc" onclick="selectDiagramMetric('acc')">Aksesoris</button>
+          <button type="button" class="diagram-tab" data-metric="cuci" onclick="selectDiagramMetric('cuci')">Cuci</button>
+          <button type="button" class="diagram-tab" data-metric="finish" onclick="selectDiagramMetric('finish')">Finishing</button>
+          <button type="button" class="diagram-tab" data-metric="lain" onclick="selectDiagramMetric('lain')">Lainnya</button>
         </div>
 
         <table class="breakdown-table">
@@ -1159,6 +1198,33 @@
     calculate();
   }
 
+
+  let activeDiagramMetric = 'kain';
+  function selectDiagramMetric(key) {
+    activeDiagramMetric = key;
+    document.querySelectorAll('.diagram-tab').forEach(btn => btn.classList.toggle('active', btn.dataset.metric === key));
+    if (window.hppDiagramMetrics) renderDiagramMetric(window.hppDiagramMetrics);
+  }
+
+  function renderDiagramMetric(metrics) {
+    window.hppDiagramMetrics = metrics;
+    const colors = ['#1e3a8a','#3b82f6','#06b6d4','#10b981','#f59e0b','#94a3b8'];
+    let angle = 0;
+    const slices = metrics.map((m, i) => {
+      const next = angle + Math.max(0, m.pct);
+      const part = `${colors[i]} ${angle}% ${next}%`;
+      angle = next;
+      return part;
+    });
+    document.getElementById('hppDonut').style.background = 'conic-gradient(' + slices.join(',') + ')';
+    document.getElementById('donutTotal').textContent = fmtRp(metrics.reduce((sum, m) => sum + m.pcs, 0));
+    const selected = metrics.find(m => m.key === activeDiagramMetric) || metrics[0];
+    document.getElementById('diagramMetricTitle').textContent = selected.name;
+    document.getElementById('diagramMetricPcs').textContent = fmtRp(selected.pcs);
+    document.getElementById('diagramMetricTotal').textContent = fmtRp(selected.total);
+    document.getElementById('diagramMetricPct').textContent = fmtNum(selected.pct, 1) + '%';
+  }
+
   function calculate() {
     // 1. Kain
     const kainHarga = val('kainHarga');
@@ -1309,6 +1375,15 @@
     document.getElementById('pctAcc').textContent = fmtNum(pAcc, 1) + '%';
     document.getElementById('pctCuci').textContent = fmtNum(pCuci, 1) + '%';
     document.getElementById('pctFin').textContent = fmtNum(pFin, 1) + '%';
+
+    renderDiagramMetric([
+      { key:'kain', name:'Kain Jeans', pcs:kainPerPcs, total:kainTotal, pct:pKain },
+      { key:'jahit', name:'Ongkos Jahit', pcs:jahitPerPcs, total:jahitTotal, pct:pJahit },
+      { key:'acc', name:'Aksesoris', pcs:accPerPcs, total:accTotal, pct:pAcc },
+      { key:'cuci', name:'Ongkos Cucian', pcs:cuciPerPcs, total:cuciTotal, pct:pCuci },
+      { key:'finish', name:'Finishing', pcs:finishPerPcs, total:finishTotal, pct:pFin },
+      { key:'lain', name:'Biaya Lainnya', pcs:lainPerPcs, total:lainTotal, pct:pLain }
+    ]);
 
     // Harga Jual & Pajak
     const pajakPct = val('pajakPct');
