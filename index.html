@@ -593,11 +593,11 @@
         <div class="grid-2">
           <div class="field">
             <label for="productName">Nama Model / Artikel Jeans</label>
-            <input type="text" id="productName" placeholder="Contoh: Slimfit Indigo 14oz" oninput="calculate()" />
+            <input type="text" id="productName" placeholder="Contoh: Slimfit Indigo 14oz" onfocus="moveCursorToEnd(this)" oninput="calculate()" />
           </div>
           <div class="field">
             <label for="catatan">Catatan Tambahan (Opsional)</label>
-            <input type="text" id="catatan" placeholder="Misal: Size 28-34, Batch Nov" oninput="calculate()" />
+            <input type="text" id="catatan" placeholder="Misal: Size 28-34, Batch Nov" onfocus="moveCursorToEnd(this)" oninput="calculate()" />
           </div>
         </div>
       </div>
@@ -613,13 +613,13 @@
             <label for="kainHarga">Harga Kain (Berapa?)</label>
             <div class="input-group">
               <span class="prefix">Rp</span>
-              <input type="number" id="kainHarga" class="has-prefix" min="0" step="500" oninput="calculate()" />
+              <input type="text" inputmode="decimal" id="kainHarga" class="has-prefix" min="0" step="500" onfocus="moveCursorToEnd(this)" oninput="calculate()" />
             </div>
           </div>
           <div class="field">
             <label for="kainBeli">Beli Berapa? (<span id="lblSatuan">Yard</span>)</label>
             <div class="input-group">
-              <input type="number" id="kainBeli" class="has-suffix" min="0" step="0.5" oninput="calculate()" />
+              <input type="text" inputmode="decimal" id="kainBeli" class="has-suffix" min="0" step="0.5" onfocus="moveCursorToEnd(this)" oninput="calculate()" />
               <select id="kainSatuan" style="width: 90px; border-radius: 0 8px 8px 0; border-left: none;" onchange="calculate()">
                 <option value="Yard">Yard</option>
                 <option value="Meter">Meter</option>
@@ -631,7 +631,7 @@
           <div class="field">
             <label for="jadiPcs">Jadi Berapa Pcs? (Total Hasil)</label>
             <div class="input-group">
-              <input type="number" id="jadiPcs" class="has-suffix" min="1" step="1" oninput="calculate()" />
+              <input type="text" inputmode="decimal" id="jadiPcs" class="has-suffix" min="1" step="1" onfocus="moveCursorToEnd(this)" oninput="calculate()" />
               <span class="suffix">Pcs</span>
             </div>
           </div>
@@ -663,7 +663,7 @@
             <label for="jahitPcsVal">Ongkos Jahit Per Pcs</label>
             <div class="input-group">
               <span class="prefix">Rp</span>
-              <input type="number" id="jahitPcsVal" class="has-both" min="0" step="500" oninput="calculate()" />
+              <input type="text" inputmode="decimal" id="jahitPcsVal" class="has-both" min="0" step="500" onfocus="moveCursorToEnd(this)" oninput="calculate()" />
               <span class="suffix">/ pcs</span>
             </div>
           </div>
@@ -671,7 +671,7 @@
             <label for="jahitLusinVal">Ongkos Jahit Per Lusin (12 Pcs)</label>
             <div class="input-group">
               <span class="prefix">Rp</span>
-              <input type="number" id="jahitLusinVal" class="has-both" min="0" step="5000" oninput="calculate()" />
+              <input type="text" inputmode="decimal" id="jahitLusinVal" class="has-both" min="0" step="5000" onfocus="moveCursorToEnd(this)" oninput="calculate()" />
               <span class="suffix">/ lusin</span>
             </div>
           </div>
@@ -679,7 +679,7 @@
             <label for="jahitBoronganVal">Ongkos Jahit Borongan (1 Batch)</label>
             <div class="input-group">
               <span class="prefix">Rp</span>
-              <input type="number" id="jahitBoronganVal" class="has-both" min="0" step="5000" oninput="calculate()" />
+              <input type="text" inputmode="decimal" id="jahitBoronganVal" class="has-both" min="0" step="5000" onfocus="moveCursorToEnd(this)" oninput="calculate()" />
               <span class="suffix">total</span>
             </div>
           </div>
@@ -733,7 +733,7 @@
               <label for="cuciVal">Biaya Cucian</label>
               <div class="input-group">
                 <span class="prefix">Rp</span>
-                <input type="number" id="cuciVal" class="has-prefix" min="0" step="500" oninput="calculate()" />
+                <input type="text" inputmode="decimal" id="cuciVal" class="has-prefix" min="0" step="500" onfocus="moveCursorToEnd(this)" oninput="calculate()" />
               </div>
             </div>
             <div class="field">
@@ -755,7 +755,7 @@
               <label for="finishVal">Biaya Finishing (Steam, Buang Benang, Packing)</label>
               <div class="input-group">
                 <span class="prefix">Rp</span>
-                <input type="number" id="finishVal" class="has-prefix" min="0" step="500" oninput="calculate()" />
+                <input type="text" inputmode="decimal" id="finishVal" class="has-prefix" min="0" step="500" onfocus="moveCursorToEnd(this)" oninput="calculate()" />
               </div>
             </div>
             <div class="field">
@@ -775,7 +775,7 @@
               <label for="lainVal">Biaya Lainnya / Potong / Ongkir Bahan (Opsional)</label>
               <div class="input-group">
                 <span class="prefix">Rp</span>
-                <input type="number" id="lainVal" class="has-prefix" min="0" step="1000" oninput="calculate()" />
+                <input type="text" inputmode="decimal" id="lainVal" class="has-prefix" min="0" step="1000" onfocus="moveCursorToEnd(this)" oninput="calculate()" />
               </div>
             </div>
             <div class="field">
@@ -894,7 +894,7 @@
           <label for="hargaJualInput">Harga Jual Per Pcs (Sebelum Dikurangi Pajak)</label>
           <div class="input-group">
             <span class="prefix">Rp</span>
-            <input type="number" id="hargaJualInput" class="has-both" min="0" step="1000" oninput="calculate()" />
+            <input type="text" inputmode="decimal" id="hargaJualInput" class="has-both" min="0" step="1000" onfocus="moveCursorToEnd(this)" oninput="calculate()" />
             <span class="suffix">/ pcs</span>
           </div>
         </div>
@@ -910,7 +910,7 @@
             </div>
             <div class="field">
               <label for="targetLabaVal">Nilai Target Laba Bersih</label>
-              <input type="number" id="targetLabaVal" min="0" step="1000" oninput="calculate()" />
+              <input type="text" inputmode="decimal" id="targetLabaVal" min="0" step="1000" onfocus="moveCursorToEnd(this)" oninput="calculate()" />
             </div>
           </div>
         </div>
@@ -919,7 +919,7 @@
           <div class="field">
             <label for="pajakPct">Tarif Pajak (%)</label>
             <div class="input-group">
-              <input type="number" id="pajakPct" class="has-suffix" min="0" max="99" step="0.1" oninput="calculate()" />
+              <input type="text" inputmode="decimal" id="pajakPct" class="has-suffix" min="0" max="99" step="0.1" onfocus="moveCursorToEnd(this)" oninput="calculate()" />
               <span class="suffix">%</span>
             </div>
             <div class="preset-pills no-print">
@@ -1004,6 +1004,14 @@
     return isNaN(v) ? 0 : v;
   };
 
+  function moveCursorToEnd(input) {
+    // Saat kolom angka disentuh, letakkan kursor di akhir agar angka baru menambah nilai lama.
+    const place = () => {
+      try { const end = input.value.length; input.setSelectionRange(end, end); } catch (e) {}
+    };
+    requestAnimationFrame(place);
+  }
+
   function showToast(msg) {
     const t = document.getElementById('toast');
     t.textContent = msg;
@@ -1048,10 +1056,10 @@
       row.innerHTML = `
         <input type="text" class="acc-name" placeholder="Nama aksesoris" value="${escapeHtml(item.name)}"
           oninput="updateAcc(${idx}, 'name', this.value)" />
-        <input type="number" placeholder="Harga" min="0" step="100" value="${item.price}"
-          oninput="updateAcc(${idx}, 'price', parseFloat(this.value) || 0)" />
-        <input type="number" placeholder="Qty" min="0" step="0.1" value="${item.qty}"
-          oninput="updateAcc(${idx}, 'qty', parseFloat(this.value) || 0)" />
+        <input type="text" inputmode="decimal" placeholder="Harga" min="0" step="100" value="${item.price}"
+          onfocus="moveCursorToEnd(this)" oninput="updateAcc(${idx}, 'price', parseFloat(this.value) || 0)" />
+        <input type="text" inputmode="decimal" placeholder="Qty" min="0" step="0.1" value="${item.qty}"
+          onfocus="moveCursorToEnd(this)" oninput="updateAcc(${idx}, 'qty', parseFloat(this.value) || 0)" />
         <select onchange="updateAcc(${idx}, 'mode', this.value)">
           <option value="pcs" ${item.mode === 'pcs' ? 'selected' : ''}>Per Pcs</option>
           <option value="batch" ${item.mode === 'batch' ? 'selected' : ''}>Borongan Batch</option>
