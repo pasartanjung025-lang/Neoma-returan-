@@ -1005,11 +1005,10 @@
   };
 
   function moveCursorToEnd(input) {
-    // Saat kolom angka disentuh, letakkan kursor di akhir agar angka baru menambah nilai lama.
-    const place = () => {
-      try { const end = input.value.length; input.setSelectionRange(end, end); } catch (e) {}
-    };
-    requestAnimationFrame(place);
+    // Pilih seluruh angka lama agar ketikan baru menggantinya, bukan menambah di belakang.
+    requestAnimationFrame(() => {
+      try { input.select(); } catch (e) {}
+    });
   }
 
   function showToast(msg) {
