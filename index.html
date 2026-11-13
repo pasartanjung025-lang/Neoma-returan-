@@ -1214,6 +1214,59 @@
           <div id="detailDiagramGraphBars" class="diagram-graph-bars"></div>
         </div>
       </div>
+  <div class="card" id="salesDiagramSection">
+    <div class="card-header">
+      <div class="card-title">Diagram Penjualan & Estimasi Retur</div>
+      <span class="badge-sub">Per pcs</span>
+    </div>
+    <p class="graph-caption" style="margin-bottom:12px;">Masukkan biaya packing per pcs dan perkiraan persentase retur. Diagram otomatis mengikuti harga jual dan pajak.</p>
+    <div class="grid-2" style="margin-bottom:14px;">
+      <div class="field">
+        <label for="salesPackingPcs">Biaya Packing / Pcs (Rp)</label>
+        <div class="input-group"><span class="prefix">Rp</span><input type="text" inputmode="decimal" id="salesPackingPcs" class="has-prefix" value="0" onfocus="moveCursorToEnd(this)" oninput="calculate()" /></div>
+      </div>
+      <div class="field">
+        <label for="salesReturPct">Estimasi Persentase Retur (%)</label>
+        <div class="input-group"><input type="text" inputmode="decimal" id="salesReturPct" class="has-suffix" value="0" onfocus="moveCursorToEnd(this)" oninput="calculate()" /><span class="suffix">%</span></div>
+      </div>
+    </div>
+    <div class="kpi-grid" style="margin-bottom:12px;">
+      <div class="kpi-box"><div class="kpi-label">Estimasi Biaya Retur / Pcs</div><div class="kpi-val" id="salesReturCost">Rp 0</div></div>
+      <div class="kpi-box dark"><div class="kpi-label">Estimasi Laba Setelah Packing & Retur</div><div class="kpi-val" id="salesProfitAfter">Rp 0</div></div>
+    </div>
+    <div class="diagram-view-tabs no-print" role="tablist" aria-label="Diagram penjualan">
+      <button type="button" class="diagram-view-btn active" id="salesViewChart" onclick="setSalesDiagramView('chart')">Diagram Bulat</button>
+      <button type="button" class="diagram-view-btn" id="salesViewGraph" onclick="setSalesDiagramView('graph')">Grafik Batang</button>
+    </div>
+    <div id="salesChartPanel">
+      <div class="diagram-overview">
+        <div class="donut-chart" id="salesDonut" role="img" aria-label="Diagram komposisi harga jual">
+          <div class="donut-hole"><small>Harga Jual / Pcs</small><strong id="salesDonutTotal">Rp 0</strong></div>
+        </div>
+        <div class="diagram-detail">
+          <div class="diagram-detail-title">Rincian Harga Jual</div>
+          <div class="diagram-metric-row"><span>Harga jual</span><strong id="salesPriceValue">Rp 0</strong></div>
+          <div class="diagram-metric-row"><span>Potongan pajak</span><strong id="salesTaxValue">Rp 0</strong></div>
+          <div class="diagram-metric-row"><span>Biaya packing</span><strong id="salesPackingValue">Rp 0</strong></div>
+          <div class="diagram-metric-row"><span>Estimasi retur</span><strong id="salesReturnValue">Rp 0 (0%)</strong></div>
+          <div class="diagram-metric-row"><span>HPP / modal</span><strong id="salesHppValue">Rp 0</strong></div>
+          <div class="diagram-metric-row"><span>Laba setelah biaya</span><strong id="salesProfitValue">Rp 0</strong></div>
+        </div>
+      </div>
+      <div class="legend" id="salesLegend">
+        <span><i class="dot" style="background:#1e3a8a"></i>HPP</span>
+        <span><i class="dot" style="background:#ef4444"></i>Pajak</span>
+        <span><i class="dot" style="background:#f59e0b"></i>Packing</span>
+        <span><i class="dot" style="background:#06b6d4"></i>Retur</span>
+        <span><i class="dot" style="background:#10b981"></i>Laba</span>
+      </div>
+    </div>
+    <div id="salesGraphPanel" class="hidden">
+      <div class="graph-heading">Grafik Batang Komponen Harga Jual</div>
+      <p class="graph-caption">Persentase setiap nilai dibandingkan harga jual per pcs.</p>
+      <div id="salesGraphBars" class="diagram-graph-bars"></div>
+    </div>
+  </div>
 </section>
 
 <nav class="bottom-nav no-print" aria-label="Navigasi utama">
@@ -1443,6 +1496,50 @@
     renderDetailDiagramMetric(metrics);
   }
 
+  function setSalesDiagramView(view) {
+    const chart = view === 'chart';
+    document.getElementById('salesChartPanel').classList.toggle('hidden', !chart);
+    document.getElementById('salesGraphPanel').classList.toggle('hidden', chart);
+    document.getElementById('salesViewChart').classList.toggle('active', chart);
+    document.getElementById('salesViewGraph').classList.toggle('active', !chart);
+  }
+
+  function renderSalesDiagram(data) {
+    const colors = ['#1e3a8a', '#ef4444', '#f59e0b', '#06b6d4', '#10b981'];
+    const total = Math.max(0, data.price);
+    const parts = [
+      { name: 'HPP / Modal', value: data.hpp },
+      { name: 'Potongan Pajak', value: data.tax },
+      { name: 'Biaya Packing', value: data.packing },
+      { name: 'Estimasi Retur', value: data.returns },
+      { name: 'Laba Setelah Biaya', value: data.profit }
+    ];
+    const positive = parts.map(p => Math.max(0, p.value));
+    const denom = positive.reduce((a, b) => a + b, 0);
+    let angle = 0;
+    const slices = positive.map((v, i) => {
+      const next = angle + (denom > 0 ? v / denom * 100 : 0);
+      const part = colors[i] + ' ' + angle + '% ' + next + '%';
+      angle = next;
+      return part;
+    });
+    document.getElementById('salesDonut').style.background = 'conic-gradient(' + (denom > 0 ? slices.join(',') : '#e2e8f0 0% 100%') + ')';
+    document.getElementById('salesDonutTotal').textContent = fmtRp(data.price);
+    document.getElementById('salesPriceValue').textContent = fmtRp(data.price);
+    document.getElementById('salesTaxValue').textContent = fmtRp(data.tax) + ' (' + fmtNum(total > 0 ? data.tax / total * 100 : 0, 1) + '%)';
+    document.getElementById('salesPackingValue').textContent = fmtRp(data.packing) + ' (' + fmtNum(total > 0 ? data.packing / total * 100 : 0, 1) + '%)';
+    document.getElementById('salesReturnValue').textContent = fmtRp(data.returns) + ' (' + fmtNum(data.returnPct, 1) + '% retur)';
+    document.getElementById('salesHppValue').textContent = fmtRp(data.hpp) + ' (' + fmtNum(total > 0 ? data.hpp / total * 100 : 0, 1) + '%)';
+    document.getElementById('salesProfitValue').textContent = fmtRp(data.profit);
+    document.getElementById('salesReturCost').textContent = fmtRp(data.returns);
+    document.getElementById('salesProfitAfter').textContent = fmtRp(data.profit);
+    document.getElementById('salesGraphBars').innerHTML = parts.map((p, i) => {
+      const pct = total > 0 ? p.value / total * 100 : 0;
+      const width = Math.max(0, Math.min(100, pct));
+      return '<div class="graph-row"><div class="graph-row-top"><strong>' + p.name + '</strong><span>' + fmtRp(p.value) + ' · ' + fmtNum(pct, 1) + '%</span></div><div class="graph-track"><div class="graph-fill" style="width:' + width + '%;background:' + colors[i] + '"></div></div></div>';
+    }).join('');
+  }
+
   function calculate() {
     // 1. Kain
     const kainHarga = val('kainHarga');
@@ -1655,6 +1752,21 @@
     document.getElementById('resOmzetKotor').textContent = fmtRp(omzetKotor);
     document.getElementById('resPajakTotal').textContent = fmtRp(pajakTotal);
 
+    // Diagram penjualan: packing terpisah dan estimasi retur dihitung dari harga jual.
+    const packingPerPcs = Math.max(0, val('salesPackingPcs'));
+    const returPct = Math.max(0, Math.min(100, val('salesReturPct')));
+    const returCostPerPcs = hargaJual * returPct / 100;
+    const profitAfterPackingReturn = netSales - hppPerPcs - packingPerPcs - returCostPerPcs;
+    renderSalesDiagram({
+      price: hargaJual,
+      tax: pajakRp,
+      packing: packingPerPcs,
+      returnPct: returPct,
+      returns: returCostPerPcs,
+      hpp: hppPerPcs,
+      profit: profitAfterPackingReturn
+    });
+
     const resBox = document.getElementById('resultBox');
     const lblStatus = document.getElementById('resStatusLabel');
     if (labaPcs >= 0) {
@@ -1692,7 +1804,9 @@
       targetLabaTipe: document.getElementById('targetLabaTipe').value,
       targetLabaVal: document.getElementById('targetLabaVal').value,
       pajakPct: document.getElementById('pajakPct').value,
-      pajakMetode: document.getElementById('pajakMetode').value
+      pajakMetode: document.getElementById('pajakMetode').value,
+      salesPackingPcs: document.getElementById('salesPackingPcs').value,
+      salesReturPct: document.getElementById('salesReturPct').value
     };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
     return state;
@@ -1809,6 +1923,8 @@
     document.getElementById('targetLabaVal').value = s.targetLabaVal ?? '';
     document.getElementById('pajakPct').value = s.pajakPct ?? 0;
     document.getElementById('pajakMetode').value = s.pajakMetode || 'direct';
+    document.getElementById('salesPackingPcs').value = s.salesPackingPcs ?? 0;
+    document.getElementById('salesReturPct').value = s.salesReturPct ?? 0;
 
     renderAccessories();
     setJahitMode(s.jahitMode || 'pcs');
@@ -1848,7 +1964,9 @@
       targetLabaTipe: 'rp',
       targetLabaVal: 45000,
       pajakPct: 11,
-      pajakMetode: 'direct'
+      pajakMetode: 'direct',
+      salesPackingPcs: 0,
+      salesReturPct: 0
     });
     showToast('Contoh hitungan dimuat!');
   }
@@ -1879,7 +1997,9 @@
       targetLabaTipe: 'rp',
       targetLabaVal: 0,
       pajakPct: 0,
-      pajakMetode: 'direct'
+      pajakMetode: 'direct',
+      salesPackingPcs: 0,
+      salesReturPct: 0
     });
     showToast('Data dikosongkan');
   }
