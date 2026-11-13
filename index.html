@@ -549,6 +549,26 @@
       .layout { grid-template-columns: 1fr 1fr; }
       .card { break-inside: avoid; box-shadow: none; }
     }
+
+    html { scroll-behavior: smooth; scroll-padding-bottom: 100px; }
+    body { padding-bottom: calc(96px + env(safe-area-inset-bottom)); }
+    .bottom-nav {
+      position: fixed; left: 50%; bottom: 0; transform: translateX(-50%);
+      width: min(100%, 560px); display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 6px; padding: 9px 12px calc(9px + env(safe-area-inset-bottom));
+      background: rgba(255,255,255,.97); border: 1px solid #dbe3ef;
+      border-bottom: 0; border-radius: 18px 18px 0 0;
+      box-shadow: 0 -5px 22px rgba(15,23,42,.12); z-index: 1000;
+      backdrop-filter: blur(12px);
+    }
+    .bottom-nav button {
+      display:flex; flex-direction:column; align-items:center; justify-content:center;
+      gap:3px; min-height:52px; padding:6px 4px; border-radius:12px;
+      background:transparent; color:#64748b; font-size:.72rem; font-weight:700;
+    }
+    .bottom-nav button .nav-icon { font-size:1.25rem; line-height:1.2; }
+    .bottom-nav button.active { background:#eff6ff; color:#1e40af; }
+    @media print { .bottom-nav { display:none !important; } body { padding-bottom:0; } }
   </style>
 </head>
 <body>
@@ -568,7 +588,7 @@
     </div>
   </header>
 
-  <section class="card history-card">
+  <section class="card history-card" id="historySection">
     <div class="card-header">
       <div>
         <div class="card-title">Riwayat Hitungan Tersimpan</div>
@@ -581,7 +601,7 @@
     </div>
   </section>
 
-  <div class="layout">
+  <div class="layout" id="calculatorSection">
     <!-- KOLOM KIRI: INPUT PRODUKSI -->
     <div>
 
@@ -805,9 +825,9 @@
     <div class="sticky-panel">
 
       <!-- Ringkasan HPP -->
-      <div class="card">
+      <div class="card" id="diagramSection">
         <div class="card-header">
-          <div class="card-title">Ringkasan Modal (HPP)</div>
+          <div class="card-title">Diagram & Ringkasan Modal (HPP)</div>
           <span class="badge-sub"><span class="pcsCountLbl">0</span> Pcs</span>
         </div>
 
@@ -985,9 +1005,30 @@
   </div>
 </div>
 
+
+<nav class="bottom-nav no-print" aria-label="Navigasi utama">
+  <button type="button" class="active" data-target="calculatorSection" onclick="navigateBottom('calculatorSection', this)">
+    <span class="nav-icon">🧮</span><span>Hitung</span>
+  </button>
+  <button type="button" data-target="diagramSection" onclick="navigateBottom('diagramSection', this)">
+    <span class="nav-icon">📊</span><span>Diagram</span>
+  </button>
+  <button type="button" data-target="historySection" onclick="navigateBottom('historySection', this)">
+    <span class="nav-icon">🗂️</span><span>Riwayat</span>
+  </button>
+</nav>
+
 <div class="toast" id="toast">Tersalin!</div>
 
 <script>
+
+  function navigateBottom(targetId, button) {
+    const target = document.getElementById(targetId);
+    if (!target) return;
+    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    document.querySelectorAll('.bottom-nav button').forEach(item => item.classList.toggle('active', item === button));
+  }
+
   const STORAGE_KEY = 'hpp_jeans_calculator_v1';
 
   let jahitMode = 'pcs';     // 'pcs' | 'borongan' | 'gabung'
