@@ -4,7 +4,7 @@
   "private": true,
   "description": "Android app wrapper for Kalkulator HPP Jeans",
   "scripts": {
-    "build": "mkdir -p www && cp index.html manifest.webmanifest sw.js icon.svg www/"
+    "build": "mkdir -p www && cp index.html manifest.webmanifest sw.js icon.svg neoma-icon.png www/"
   },
   "dependencies": {
     "@capacitor/android": "6.2.1",
