@@ -1,6 +1,6 @@
 {
-  "name": "Kalkulator HPP Jeans",
-  "short_name": "NEOMA HPP",
+  "name": "HPP Neoma",
+  "short_name": "HPP Neoma",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
