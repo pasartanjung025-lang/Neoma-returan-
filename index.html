@@ -1018,7 +1018,7 @@
     document.getElementById('tabJahitBorongan').classList.toggle('active', mode === 'borongan');
     document.getElementById('tabJahitGabung').classList.toggle('active', mode === 'gabung');
 
-    document.getElementById('wrapJahitPcs').classList.toggle('hidden', mode === 'borongan');
+    document.getElementById('wrapJahitPcs').classList.toggle('hidden', mode === 'borongan' || mode === 'dozen');
     document.getElementById('wrapJahitDozen').classList.toggle('hidden', mode !== 'dozen');
     document.getElementById('wrapJahitBorongan').classList.toggle('hidden', mode === 'pcs' || mode === 'dozen');
     calculate();
