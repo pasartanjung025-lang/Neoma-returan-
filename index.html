@@ -647,12 +647,13 @@
       <!-- 2. Ongkos Jahit -->
       <div class="card">
         <div class="card-header">
-          <div class="card-title">2. Ongkos Jahit (Borongan & Per Pcs)</div>
+          <div class="card-title">2. Ongkos Jahit (Per Pcs, Per Lusin & Borongan)</div>
           <span class="badge-sub" id="badgeJahit">Rp 0 / pcs</span>
         </div>
 
         <div class="tabs no-print">
           <button type="button" class="tab-btn active" id="tabJahitPcs" onclick="setJahitMode('pcs')">Hitung Per Pcs</button>
+          <button type="button" class="tab-btn" id="tabJahitDozen" onclick="setJahitMode('dozen')">Hitung Per Lusin (÷ 12)</button>
           <button type="button" class="tab-btn" id="tabJahitBorongan" onclick="setJahitMode('borongan')">Hitung Borongan (Total)</button>
           <button type="button" class="tab-btn" id="tabJahitGabung" onclick="setJahitMode('gabung')">Gabungan (Borongan + Per Pcs)</button>
         </div>
@@ -664,6 +665,14 @@
               <span class="prefix">Rp</span>
               <input type="number" id="jahitPcsVal" class="has-both" min="0" step="500" oninput="calculate()" />
               <span class="suffix">/ pcs</span>
+            </div>
+          </div>
+          <div class="field hidden" id="wrapJahitDozen">
+            <label for="jahitLusinVal">Ongkos Jahit Per Lusin (12 Pcs)</label>
+            <div class="input-group">
+              <span class="prefix">Rp</span>
+              <input type="number" id="jahitLusinVal" class="has-both" min="0" step="5000" oninput="calculate()" />
+              <span class="suffix">/ lusin</span>
             </div>
           </div>
           <div class="field hidden" id="wrapJahitBorongan">
@@ -1005,11 +1014,13 @@
   function setJahitMode(mode) {
     jahitMode = mode;
     document.getElementById('tabJahitPcs').classList.toggle('active', mode === 'pcs');
+    document.getElementById('tabJahitDozen').classList.toggle('active', mode === 'dozen');
     document.getElementById('tabJahitBorongan').classList.toggle('active', mode === 'borongan');
     document.getElementById('tabJahitGabung').classList.toggle('active', mode === 'gabung');
 
     document.getElementById('wrapJahitPcs').classList.toggle('hidden', mode === 'borongan');
-    document.getElementById('wrapJahitBorongan').classList.toggle('hidden', mode === 'pcs');
+    document.getElementById('wrapJahitDozen').classList.toggle('hidden', mode !== 'dozen');
+    document.getElementById('wrapJahitBorongan').classList.toggle('hidden', mode === 'pcs' || mode === 'dozen');
     calculate();
   }
 
@@ -1103,12 +1114,17 @@
     // 2. Ongkos Jahit
     const jahitPcsVal = val('jahitPcsVal');
     const jahitBoronganVal = val('jahitBoronganVal');
+    const jahitLusinVal = val('jahitLusinVal');
     let jahitTotal = 0;
     let jahitPerPcs = 0;
 
     if (jahitMode === 'pcs') {
       jahitPerPcs = jahitPcsVal;
       jahitTotal = jahitPcsVal * rawJadi;
+    } else if (jahitMode === 'dozen') {
+      // Input adalah ongkos untuk 12 pcs, bukan total seluruh batch.
+      jahitPerPcs = jahitLusinVal / 12;
+      jahitTotal = jahitPerPcs * rawJadi;
     } else if (jahitMode === 'borongan') {
       jahitTotal = jahitBoronganVal;
       jahitPerPcs = rawJadi > 0 ? jahitBoronganVal / pcs : 0;
@@ -1116,6 +1132,10 @@
       jahitTotal = jahitBoronganVal + (jahitPcsVal * rawJadi);
       jahitPerPcs = rawJadi > 0 ? jahitTotal / pcs : 0;
     }
+    const jahitLusinHint = document.getElementById('jahitPerPcsText');
+    if (jahitLusinHint) jahitLusinHint.title = jahitMode === 'dozen'
+      ? `${fmtRp(jahitLusinVal)} per lusin = ${fmtRp(jahitPerPcs)} per pcs`
+      : '';
 
     document.getElementById('jahitTotalText').textContent = fmtRp(jahitTotal);
     document.getElementById('jahitPerPcsText').textContent = fmtRp(jahitPerPcs);
@@ -1291,6 +1311,7 @@
       jadiPcs: document.getElementById('jadiPcs').value,
       jahitMode,
       jahitPcsVal: document.getElementById('jahitPcsVal').value,
+      jahitLusinVal: document.getElementById('jahitLusinVal').value,
       jahitBoronganVal: document.getElementById('jahitBoronganVal').value,
       accessories,
       cuciVal: document.getElementById('cuciVal').value,
@@ -1407,6 +1428,7 @@
     document.getElementById('kainSatuan').value = s.kainSatuan || 'Yard';
     document.getElementById('jadiPcs').value = s.jadiPcs ?? '';
     document.getElementById('jahitPcsVal').value = s.jahitPcsVal ?? '';
+    document.getElementById('jahitLusinVal').value = s.jahitLusinVal ?? '';
     document.getElementById('jahitBoronganVal').value = s.jahitBoronganVal ?? '';
     accessories = Array.isArray(s.accessories) ? s.accessories : [];
     document.getElementById('cuciVal').value = s.cuciVal ?? '';
