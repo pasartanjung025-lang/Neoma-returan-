@@ -760,12 +760,18 @@
               </div>
             </div>
             <div class="field">
-              <label for="finishMode">Cara Hitung Finishing</label>
-              <select id="finishMode" onchange="calculate()">
+              <label>Cara Hitung Finishing</label>
+              <div class="tabs" role="group" aria-label="Cara hitung finishing">
+                <button type="button" class="tab-btn active" id="tabFinishPcs" onclick="setFinishMode('pcs')">Per Pcs</button>
+                <button type="button" class="tab-btn" id="tabFinishDozen" onclick="setFinishMode('dozen')">Per Lusin (÷12)</button>
+                <button type="button" class="tab-btn" id="tabFinishBatch" onclick="setFinishMode('batch')">Borongan</button>
+              </div>
+              <select id="finishMode" onchange="calculate()" aria-label="Mode finishing" style="display:none">
                 <option value="pcs">Per Pcs</option>
                 <option value="dozen">Per Lusin (÷12)</option>
                 <option value="batch">Borongan (Total Batch)</option>
               </select>
+              <small id="finishModeHint" style="color:var(--muted)">Biaya dihitung untuk setiap pcs.</small>
             </div>
           </div>
         </div>
@@ -1097,6 +1103,21 @@
     calculate();
   }
 
+  function setFinishMode(mode) {
+    const allowed = ['pcs', 'dozen', 'batch'];
+    if (!allowed.includes(mode)) return;
+    document.getElementById('finishMode').value = mode;
+    ['pcs', 'dozen', 'batch'].forEach(key => {
+      const button = document.getElementById('tabFinish' + (key === 'dozen' ? 'Dozen' : key === 'batch' ? 'Batch' : 'Pcs'));
+      if (button) button.classList.toggle('active', key === mode);
+    });
+    const hint = document.getElementById('finishModeHint');
+    if (hint) hint.textContent = mode === 'dozen'
+      ? 'Masukkan ongkos untuk 12 pcs; otomatis dibagi 12.'
+      : mode === 'pcs' ? 'Biaya dihitung untuk setiap pcs.' : 'Biaya borongan dibagi rata ke seluruh pcs dalam batch.';
+    calculate();
+  }
+
   function calculate() {
     // 1. Kain
     const kainHarga = val('kainHarga');
@@ -1178,6 +1199,9 @@
     // 5. Finishing
     const finishVal = val('finishVal');
     const finishMode = document.getElementById('finishMode').value;
+    const finishHint = document.getElementById('finishModeHint');
+    if (finishHint) finishHint.textContent = finishMode === 'dozen' ? 'Masukkan ongkos untuk 12 pcs; otomatis dibagi 12.' : (finishMode === 'pcs' ? 'Biaya dihitung untuk setiap pcs.' : 'Biaya borongan dibagi rata ke seluruh pcs dalam batch.');
+    ['pcs', 'dozen', 'batch'].forEach(key => { const button = document.getElementById('tabFinish' + (key === 'dozen' ? 'Dozen' : key === 'batch' ? 'Batch' : 'Pcs')); if (button) button.classList.toggle('active', key === finishMode); });
     const finishPerPcs = finishMode === 'pcs' ? finishVal : (finishMode === 'dozen' ? finishVal / 12 : (rawJadi > 0 ? finishVal / pcs : 0));
     const finishTotal = finishMode === 'pcs' ? finishVal * rawJadi : (finishMode === 'dozen' ? finishPerPcs * rawJadi : finishVal);
     document.getElementById('badgeFinish').textContent = `${fmtRp(finishPerPcs)} / pcs`;
