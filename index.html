@@ -2021,14 +2021,15 @@
     showToast('Data dikosongkan');
   }
 
-  // Cetak lewat PrintManager Android agar bisa memilih Simpan sebagai PDF dan folder tujuan.
+  // Simpan PDF langsung melalui pemilih folder Android (Download/Dokumen).
   function printOrSavePdf() {
     calculate();
     saveState();
-    if (window.NeomaPdf && typeof window.NeomaPdf.print === 'function') {
-      window.NeomaPdf.print();
+    if (window.NeomaPdf && typeof window.NeomaPdf.savePdf === 'function') {
+      window.NeomaPdf.savePdf();
       return;
     }
+    // Fallback untuk browser biasa: gunakan dialog cetak browser.
     window.print();
   }
 
