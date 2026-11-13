@@ -1,81 +1,1415 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#174b3c"><meta name="description" content="Aplikasi pencocokan paket retur marketplace">
-<link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon.svg">
-<title>Gudang Retur</title>
-<style>
-:root{--green:#174b3c;--green2:#205746;--ink:#202522;--muted:#858981;--line:#e9e9e4;--paper:#faf9f6;--white:#fff;--red:#b83d32;--amber:#9a6812}
-*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;padding-bottom:100px}
-header{max-width:980px;margin:auto;padding:26px 20px 12px;display:flex;justify-content:space-between;align-items:center}
-.kicker{font-size:11px;letter-spacing:3px;color:#85877f;font-weight:700}.date{border:1px solid var(--line);border-radius:22px;padding:8px 14px;color:#777;font-size:12px}
-h1{font-size:29px;letter-spacing:-1px;margin:7px 0 18px}.wrap{max-width:980px;margin:auto;padding:0 20px}
-.hero{background:var(--green);color:white;border-radius:28px;padding:27px;position:relative;min-height:230px;display:flex;flex-direction:column;align-items:flex-start;justify-content:center}
-.hero .kicker{color:#c5d7cf}.hero h2{font-size:25px;margin:10px 0}.hero p{color:#d1dfd8;line-height:1.55;margin:0 0 22px;max-width:440px}
-button,.btn{border:0;border-radius:25px;padding:12px 19px;font-weight:700;font-size:14px;cursor:pointer;background:#fff;color:var(--green);display:inline-flex;gap:8px;align-items:center;justify-content:center}
-.hero .scanicon{position:absolute;right:25px;top:25px;width:62px;height:62px;border-radius:20px;background:#ffffff22;display:grid;place-items:center;font-size:28px}
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:24px 0}.stat,.panel{background:#fff;border:1px solid var(--line);border-radius:22px;padding:19px}
-.stat strong{font-size:29px;display:block}.stat span{color:var(--muted);font-size:13px}
-.panel{margin:18px 0}.panelhead{display:flex;justify-content:space-between;align-items:center;gap:12px}.panel h3{font-size:17px;margin:0}.smallcap{font-size:11px;letter-spacing:3px;color:#85877f;font-weight:700}.upload{border:1px solid var(--line);background:white;color:#333;padding:10px 15px}
-.muted{color:var(--muted);font-size:14px;line-height:1.5}.empty{border:1px dashed #deded7;border-radius:20px;padding:32px 15px;text-align:center;color:var(--muted)}.empty b{display:block;color:#555;margin-bottom:7px}
-.nav{position:fixed;bottom:12px;left:50%;transform:translateX(-50%);width:min(570px,calc(100% - 28px));background:#fff;border:1px solid var(--line);box-shadow:0 8px 30px #00000012;border-radius:24px;padding:8px;display:grid;grid-template-columns:repeat(4,1fr);z-index:10}
-.nav button{background:transparent;color:#85877f;border-radius:16px;display:flex;flex-direction:column;gap:4px;padding:9px 4px;font-size:12px}.nav button.active{background:#e9f0ec;color:var(--green)}.nav .ico{font-size:21px}
-.view{display:none}.view.active{display:block}
-.field{display:flex;flex-direction:column;gap:7px;margin:14px 0}.field label{font-size:13px;font-weight:700}.field input,.field select{width:100%;padding:14px;border:1px solid #ddd;border-radius:13px;background:#fff;font-size:16px;outline-color:var(--green)}
-.primary{background:var(--green);color:#fff;width:100%;padding:15px}.secondary{background:#eef2ef;color:var(--green);width:100%;padding:14px}.row{display:flex;gap:10px}.row>*{flex:1}
-.result{border-radius:16px;padding:15px;margin-top:15px;background:#eef4ef;border:1px solid #d8e6dc}.result.bad{background:#fff0ed;border-color:#f0d4cf}.result h3{margin:0 0 8px}.pill{display:inline-block;border-radius:20px;padding:5px 10px;background:#e8eee9;color:var(--green);font-size:12px;font-weight:700}.pill.red{background:#f8e5e1;color:var(--red)}
-table{width:100%;border-collapse:collapse;font-size:13px}td,th{text-align:left;padding:11px 7px;border-bottom:1px solid var(--line);vertical-align:top}th{color:var(--muted);font-weight:600}
-.camera{background:#101815;border-radius:20px;overflow:hidden;position:relative;min-height:240px;display:grid;place-items:center;color:#fff;margin:14px 0}.camera video{width:100%;max-height:380px;object-fit:cover}.camera .hint{padding:25px;text-align:center}
-.note{font-size:12px;color:var(--muted);line-height:1.5}.hidden{display:none!important}
-@media(min-width:700px){.hero{padding:38px;min-height:250px}.wrap{padding:0 28px}header{padding-left:28px;padding-right:28px}}
-@media(max-width:430px){h1{font-size:26px}.hero{padding:23px;min-height:230px}.stats{gap:7px}.stat{padding:14px 12px}.stat strong{font-size:25px}.stat span{font-size:11px}}
-</style></head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#1e3a8a" />
+  <meta name="description" content="Kalkulator HPP produksi jeans, harga jual, pajak, dan laba per pcs maupun batch." />
+  <link rel="manifest" href="./manifest.webmanifest" />
+  <title>Kalkulator HPP & Harga Jual Jeans</title>
+  <style>
+    :root {
+      --bg: #f1f5f9;
+      --card: #ffffff;
+      --primary: #1e3a8a;       /* Denim Indigo */
+      --primary-light: #eff6ff;
+      --accent: #2563eb;
+      --success: #15803d;
+      --success-bg: #dcfce7;
+      --danger: #b91c1c;
+      --danger-bg: #fee2e2;
+      --warning: #b45309;
+      --warning-bg: #fef3c7;
+      --text: #0f172a;
+      --muted: #64748b;
+      --border: #e2e8f0;
+      --radius: 12px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      padding: 16px;
+      padding-bottom: 60px;
+    }
+
+    .container {
+      max-width: 1180px;
+      margin: 0 auto;
+    }
+
+    header {
+      background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+      color: #fff;
+      padding: 20px 24px;
+      border-radius: var(--radius);
+      margin-bottom: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
+    }
+
+    header h1 {
+      font-size: 1.35rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+
+    header p {
+      font-size: 0.875rem;
+      color: #cbd5e1;
+      margin-top: 2px;
+    }
+
+    .header-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    button {
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 0.85rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 8px;
+      padding: 9px 14px;
+      transition: all 0.15s ease;
+    }
+
+    .btn-light {
+      background: rgba(255, 255, 255, 0.14);
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+    }
+    .btn-light:hover { background: rgba(255, 255, 255, 0.24); }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+    }
+    .btn-primary:hover { background: #172554; }
+
+    .btn-outline {
+      background: #fff;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .btn-outline:hover { background: #f8fafc; }
+
+    .btn-success {
+      background: var(--success);
+      color: #fff;
+    }
+    .btn-success:hover { background: #166534; }
+
+    .btn-danger-sm {
+      background: #fee2e2;
+      color: var(--danger);
+      padding: 6px 10px;
+      font-size: 0.78rem;
+    }
+    .btn-danger-sm:hover { background: #fecaca; }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 1.35fr 0.95fr;
+      gap: 20px;
+      align-items: start;
+    }
+
+    @media (max-width: 920px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 20px;
+      border: 1px solid var(--border);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+      margin-bottom: 16px;
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+      gap: 10px;
+    }
+
+    .card-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .badge-sub {
+      font-size: 0.8rem;
+      font-weight: 700;
+      background: var(--primary-light);
+      color: var(--primary);
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 12px;
+    }
+
+    @media (max-width: 600px) {
+      .grid-2, .grid-3 {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #334155;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    select {
+      width: 100%;
+      padding: 9px 11px;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      font-size: 0.92rem;
+      font-family: inherit;
+      color: var(--text);
+      background: #fff;
+      transition: border-color 0.15s;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+    }
+
+    .input-group {
+      display: flex;
+      align-items: stretch;
+    }
+
+    .input-group span.prefix,
+    .input-group span.suffix {
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      padding: 9px 10px;
+      font-size: 0.82rem;
+      color: var(--muted);
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      white-space: nowrap;
+    }
+
+    .input-group span.prefix {
+      border-right: none;
+      border-radius: 8px 0 0 8px;
+    }
+
+    .input-group span.suffix {
+      border-left: none;
+      border-radius: 0 8px 8px 0;
+    }
+
+    .input-group input.has-prefix {
+      border-radius: 0 8px 8px 0;
+    }
+
+    .input-group input.has-suffix {
+      border-radius: 8px 0 0 8px;
+    }
+
+    .input-group input.has-both {
+      border-radius: 0;
+    }
+
+    .info-strip {
+      margin-top: 12px;
+      background: #f8fafc;
+      border: 1px dashed #cbd5e1;
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-size: 0.82rem;
+      color: #475569;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .info-strip strong {
+      color: var(--text);
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Segmented toggle */
+    .tabs {
+      display: inline-flex;
+      background: #f1f5f9;
+      padding: 3px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+
+    .tab-btn {
+      padding: 6px 12px;
+      font-size: 0.8rem;
+      border-radius: 6px;
+      background: transparent;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .tab-btn.active {
+      background: #fff;
+      color: var(--primary);
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+    }
+
+    /* Accessories table */
+    .acc-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .acc-item {
+      display: grid;
+      grid-template-columns: 1.6fr 1.1fr 0.7fr 1.1fr auto;
+      gap: 8px;
+      align-items: center;
+      background: #f8fafc;
+      padding: 8px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+    }
+
+    @media (max-width: 720px) {
+      .acc-item {
+        grid-template-columns: 1fr 1fr;
+      }
+      .acc-item .acc-name { grid-column: 1 / -1; }
+      .acc-item .acc-del { justify-self: end; }
+    }
+
+    .acc-labels {
+      display: grid;
+      grid-template-columns: 1.6fr 1.1fr 0.7fr 1.1fr 48px;
+      gap: 8px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--muted);
+      padding: 0 8px 4px;
+    }
+
+    @media (max-width: 720px) {
+      .acc-labels { display: none; }
+    }
+
+    /* Summary Panel (Sticky on Desktop) */
+    .sticky-panel {
+      position: sticky;
+      top: 16px;
+    }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .kpi-box {
+      background: var(--primary-light);
+      border: 1px solid #bfdbfe;
+      border-radius: 10px;
+      padding: 12px;
+    }
+
+    .kpi-box.dark {
+      background: #0f172a;
+      color: #fff;
+      border-color: #0f172a;
+    }
+
+    .kpi-box.dark .kpi-label { color: #94a3b8; }
+
+    .kpi-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #475569;
+    }
+
+    .kpi-val {
+      font-size: 1.25rem;
+      font-weight: 800;
+      margin-top: 2px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .breakdown-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+      margin-bottom: 14px;
+    }
+
+    .breakdown-table th,
+    .breakdown-table td {
+      padding: 7px 4px;
+      border-bottom: 1px solid var(--border);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .breakdown-table th {
+      text-align: left;
+      color: var(--muted);
+      font-weight: 600;
+      font-size: 0.76rem;
+    }
+
+    .breakdown-table td.num,
+    .breakdown-table th.num {
+      text-align: right;
+    }
+
+    .breakdown-table tr.total-row td {
+      border-top: 2px solid #cbd5e1;
+      border-bottom: none;
+      font-weight: 800;
+      color: var(--primary);
+      padding-top: 10px;
+      font-size: 0.92rem;
+    }
+
+    /* Stacked bar */
+    .cost-bar {
+      height: 10px;
+      border-radius: 999px;
+      overflow: hidden;
+      display: flex;
+      background: #e2e8f0;
+      margin: 10px 0 6px;
+    }
+
+    .cost-bar div { height: 100%; transition: width 0.3s ease; }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      font-size: 0.73rem;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+
+    .legend span {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .preset-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 6px;
+    }
+
+    .pill {
+      font-size: 0.73rem;
+      padding: 4px 9px;
+      border-radius: 999px;
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      color: #334155;
+      font-weight: 600;
+    }
+
+    .pill:hover {
+      background: #e2e8f0;
+    }
+
+    .result-box {
+      border-radius: 10px;
+      padding: 14px;
+      margin-top: 14px;
+      border: 1px solid var(--border);
+    }
+
+    .result-box.profit {
+      background: var(--success-bg);
+      border-color: #86efac;
+    }
+
+    .result-box.loss {
+      background: var(--danger-bg);
+      border-color: #fca5a5;
+    }
+
+    .result-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 4px 0;
+      font-size: 0.86rem;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .result-row.big {
+      border-top: 1px dashed rgba(0, 0, 0, 0.15);
+      margin-top: 6px;
+      padding-top: 8px;
+      font-size: 1rem;
+      font-weight: 800;
+    }
+
+    .hidden { display: none !important; }
+
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #0f172a;
+      color: #fff;
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s;
+      z-index: 999;
+    }
+    .toast.show { opacity: 1; }
+
+    @media print {
+      body { background: #fff; padding: 0; }
+      header, .no-print { display: none !important; }
+      .layout { grid-template-columns: 1fr 1fr; }
+      .card { break-inside: avoid; box-shadow: none; }
+    }
+  </style>
+</head>
 <body>
-<header><div><div class="kicker">GUDANG RETUR</div><h1 id="pageTitle">Ringkasan hari ini</h1></div><div class="date" id="today"></div></header>
-<main class="wrap">
-<section id="home" class="view active">
- <div class="hero"><div class="scanicon">▣</div><div class="kicker">LANGKAH CEPAT</div><h2>Scan label retur</h2><p>Foto label paket — nomor pesanan dan resi dibaca dari barcode, lalu dicocokkan dengan data Pixel.</p><button onclick="showView('scan')">Mulai scan　→</button></div>
- <div class="stats"><div class="stat"><strong id="countToday">0</strong><span>Retur hari ini</span></div><div class="stat"><strong id="countPending">0</strong><span>Menunggu cek</span></div><div class="stat"><strong id="countDone">0</strong><span>Selesai</span></div></div>
- <div class="panel"><div class="panelhead"><div><div class="smallcap">DATA PIXEL</div><h3 style="margin-top:8px"><span id="orderCount">0</span> <small style="font-size:13px;font-weight:500">pesanan siap dicocokkan</small></h3></div><button class="upload" onclick="document.getElementById('fileInput').click()">⇧　Upload</button></div><p class="muted" id="dataMessage">Memuat data pesanan…</p></div>
- <div class="panel" style="border:0;background:transparent;padding:0"><div class="panelhead"><h3>Retur terbaru</h3><a href="#" onclick="showView('returns');return false" style="color:var(--green);font-size:13px;font-weight:700">Lihat semua</a></div><div id="recent" class="empty" style="margin-top:14px"><b>Belum ada retur</b>Paket retur yang dipindai akan muncul di sini.</div></div>
-</section>
-<section id="scan" class="view">
- <div class="panel"><div class="smallcap">PEMINDAIAN LABEL</div><h2>Scan barcode / QR</h2><p class="muted">Arahkan kamera ke barcode atau QR pada label retur. Jika label hanya berisi tulisan, gunakan input manual di bawah.</p>
- <div class="camera"><video id="video" autoplay playsinline class="hidden"></video><div class="hint" id="cameraHint">Kamera belum aktif<br><span class="note">Izinkan akses kamera saat diminta browser.</span></div></div>
- <div class="row"><button class="primary" id="startCamera">Buka kamera</button><button class="secondary" id="stopCamera">Matikan</button></div>
- <p class="note" id="cameraStatus">Pemindaian barcode memerlukan browser yang mendukung Barcode Detection dan koneksi HTTPS.</p></div>
- <div class="panel"><div class="smallcap">INPUT MANUAL</div><h3 style="margin-top:8px">Masukkan nomor pesanan / resi</h3>
- <div class="field"><label>Nomor pesanan atau kode resi</label><input id="manualCode" placeholder="Scan atau ketik nomor di sini" autocomplete="off"></div>
- <button class="primary" onclick="matchCode(document.getElementById('manualCode').value,'manual')">Cocokkan data</button><div id="matchResult"></div></div>
-</section>
-<section id="returns" class="view"><div class="panel"><div class="panelhead"><div><div class="smallcap">RIWAYAT</div><h2>Data retur</h2></div><button class="upload" onclick="exportCSV()">⇩ Ekspor CSV</button></div><div class="field"><input id="filterReturns" placeholder="Cari nomor pesanan / resi" oninput="renderReturns()"></div><div id="returnList" class="empty">Belum ada data retur.</div></div></section>
-<section id="data" class="view"><div class="panel"><div class="smallcap">DATABASE PIXEL</div><h2>Data pesanan</h2><p class="muted">Unggah Excel/CSV dari marketplace. Kolom yang dikenali antara lain Order ID, nomor pesanan, resi, dan tracking number.</p><button class="primary" onclick="document.getElementById('fileInput').click()">⇧ Upload Excel / CSV</button><div style="overflow:auto;margin-top:15px"><table><thead><tr><th>Nomor pesanan</th><th>Resi</th></tr></thead><tbody id="ordersTable"></tbody></table></div><p class="note">Data tersimpan di browser HP ini. Ekspor atau simpan cadangan secara berkala.</p></div></section>
-</main>
-<nav class="nav"><button class="active" data-view="home" onclick="showView('home')"><span class="ico">⌂</span>Beranda</button><button data-view="scan" onclick="showView('scan')"><span class="ico">▣</span>Scan</button><button data-view="returns" onclick="showView('returns')"><span class="ico">♧</span>Retur</button><button data-view="data" onclick="showView('data')"><span class="ico">▤</span>Data</button></nav>
-<input type="file" id="fileInput" accept=".xlsx,.xls,.csv" class="hidden">
-<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
+<div class="container">
+  <header>
+    <div>
+      <h1>Kalkulator HPP & Harga Jual Produksi Jeans</h1>
+      <p>Hitung modal kain, jahit borongan/pcs, aksesoris, cucian, finishing, hingga harga jual bersih setelah pajak.</p>
+    </div>
+    <div class="header-actions no-print">
+      <button class="btn-light" onclick="loadSampleData()">Isi Contoh</button>
+      <button class="btn-light" onclick="clearAllData()">Kosongkan</button>
+      <button class="btn-light" onclick="copyWhatsApp()">Salin Ringkasan WA</button>
+      <button class="btn-light" onclick="window.print()">Cetak / PDF</button>
+    </div>
+  </header>
+
+  <div class="layout">
+    <!-- KOLOM KIRI: INPUT PRODUKSI -->
+    <div>
+
+      <!-- Identitas Batch -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">0. Informasi Artikel / Batch</div>
+        </div>
+        <div class="grid-2">
+          <div class="field">
+            <label for="productName">Nama Model / Artikel Jeans</label>
+            <input type="text" id="productName" placeholder="Contoh: Slimfit Indigo 14oz" oninput="calculate()" />
+          </div>
+          <div class="field">
+            <label for="catatan">Catatan Tambahan (Opsional)</label>
+            <input type="text" id="catatan" placeholder="Misal: Size 28-34, Batch Nov" oninput="calculate()" />
+          </div>
+        </div>
+      </div>
+
+      <!-- 1. Bahan Baku Kain -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">1. Bahan Baku Kain Jeans</div>
+          <span class="badge-sub" id="badgeKain">Rp 0 / pcs</span>
+        </div>
+        <div class="grid-3">
+          <div class="field">
+            <label for="kainHarga">Harga Kain (Berapa?)</label>
+            <div class="input-group">
+              <span class="prefix">Rp</span>
+              <input type="number" id="kainHarga" class="has-prefix" min="0" step="500" oninput="calculate()" />
+            </div>
+          </div>
+          <div class="field">
+            <label for="kainBeli">Beli Berapa? (<span id="lblSatuan">Yard</span>)</label>
+            <div class="input-group">
+              <input type="number" id="kainBeli" class="has-suffix" min="0" step="0.5" oninput="calculate()" />
+              <select id="kainSatuan" style="width: 90px; border-radius: 0 8px 8px 0; border-left: none;" onchange="calculate()">
+                <option value="Yard">Yard</option>
+                <option value="Meter">Meter</option>
+                <option value="Roll">Roll</option>
+                <option value="Kg">Kg</option>
+              </select>
+            </div>
+          </div>
+          <div class="field">
+            <label for="jadiPcs">Jadi Berapa Pcs? (Total Hasil)</label>
+            <div class="input-group">
+              <input type="number" id="jadiPcs" class="has-suffix" min="1" step="1" oninput="calculate()" />
+              <span class="suffix">Pcs</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="info-strip">
+          <span>Total Belanja Kain: <strong id="kainTotalText">Rp 0</strong></span>
+          <span>Pemakaian Rata-rata: <strong id="kainPakaiText">0 Yard / pcs</strong></span>
+          <span>Modal Kain / Pcs: <strong id="kainPerPcsText">Rp 0</strong></span>
+        </div>
+      </div>
+
+      <!-- 2. Ongkos Jahit -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">2. Ongkos Jahit (Borongan & Per Pcs)</div>
+          <span class="badge-sub" id="badgeJahit">Rp 0 / pcs</span>
+        </div>
+
+        <div class="tabs no-print">
+          <button type="button" class="tab-btn active" id="tabJahitPcs" onclick="setJahitMode('pcs')">Hitung Per Pcs</button>
+          <button type="button" class="tab-btn" id="tabJahitBorongan" onclick="setJahitMode('borongan')">Hitung Borongan (Total)</button>
+          <button type="button" class="tab-btn" id="tabJahitGabung" onclick="setJahitMode('gabung')">Gabungan (Borongan + Per Pcs)</button>
+        </div>
+
+        <div class="grid-2">
+          <div class="field" id="wrapJahitPcs">
+            <label for="jahitPcsVal">Ongkos Jahit Per Pcs</label>
+            <div class="input-group">
+              <span class="prefix">Rp</span>
+              <input type="number" id="jahitPcsVal" class="has-both" min="0" step="500" oninput="calculate()" />
+              <span class="suffix">/ pcs</span>
+            </div>
+          </div>
+          <div class="field hidden" id="wrapJahitBorongan">
+            <label for="jahitBoronganVal">Ongkos Jahit Borongan (1 Batch)</label>
+            <div class="input-group">
+              <span class="prefix">Rp</span>
+              <input type="number" id="jahitBoronganVal" class="has-both" min="0" step="5000" oninput="calculate()" />
+              <span class="suffix">total</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="info-strip">
+          <span>Total Ongkos Jahit (<span class="pcsCountLbl">0</span> pcs): <strong id="jahitTotalText">Rp 0</strong></span>
+          <span>Jahit / Pcs: <strong id="jahitPerPcsText">Rp 0</strong></span>
+        </div>
+      </div>
+
+      <!-- 3. Aksesoris -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">3. Aksesoris & Kelengkapan</div>
+          <span class="badge-sub" id="badgeAksesoris">Rp 0 / pcs</span>
+        </div>
+
+        <div class="acc-labels">
+          <span>Nama Aksesoris</span>
+          <span>Harga Satuan (Rp)</span>
+          <span>Qty</span>
+          <span>Basis Hitung</span>
+          <span></span>
+        </div>
+
+        <div class="acc-list" id="accList"></div>
+
+        <div style="margin-top: 12px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+          <button type="button" class="btn-outline no-print" onclick="addAccessory()">+ Tambah Aksesoris</button>
+          <div style="font-size: 0.83rem; color: #475569;">
+            Total Aksesoris Batch: <strong id="accTotalText" style="color: var(--text);">Rp 0</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. Ongkos Cucian & 5. Finishing -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">4 & 5. Ongkos Cucian (Washing) & Finishing</div>
+        </div>
+
+        <div class="grid-2">
+          <!-- Cucian -->
+          <div style="background: #f8fafc; padding: 12px; border-radius: 10px; border: 1px solid var(--border);">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+              <strong style="font-size: 0.88rem; color: var(--primary);">4. Ongkos Cucian / Wash</strong>
+              <span class="badge-sub" id="badgeCuci">Rp 0 / pcs</span>
+            </div>
+            <div class="field" style="margin-bottom: 8px;">
+              <label for="cuciVal">Biaya Cucian</label>
+              <div class="input-group">
+                <span class="prefix">Rp</span>
+                <input type="number" id="cuciVal" class="has-prefix" min="0" step="500" oninput="calculate()" />
+              </div>
+            </div>
+            <div class="field">
+              <label for="cuciMode">Cara Hitung Cucian</label>
+              <select id="cuciMode" onchange="calculate()">
+                <option value="pcs">Per Pcs</option>
+                <option value="batch">Borongan (Total Batch)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Finishing -->
+          <div style="background: #f8fafc; padding: 12px; border-radius: 10px; border: 1px solid var(--border);">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+              <strong style="font-size: 0.88rem; color: var(--primary);">5. Ongkos Finishing</strong>
+              <span class="badge-sub" id="badgeFinish">Rp 0 / pcs</span>
+            </div>
+            <div class="field" style="margin-bottom: 8px;">
+              <label for="finishVal">Biaya Finishing (Steam, Buang Benang, Packing)</label>
+              <div class="input-group">
+                <span class="prefix">Rp</span>
+                <input type="number" id="finishVal" class="has-prefix" min="0" step="500" oninput="calculate()" />
+              </div>
+            </div>
+            <div class="field">
+              <label for="finishMode">Cara Hitung Finishing</label>
+              <select id="finishMode" onchange="calculate()">
+                <option value="pcs">Per Pcs</option>
+                <option value="batch">Borongan (Total Batch)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Biaya Tambahan / Overhead -->
+        <div style="margin-top: 12px; padding-top: 12px; border-top: 1px dashed var(--border);">
+          <div class="grid-2">
+            <div class="field">
+              <label for="lainVal">Biaya Lainnya / Potong / Ongkir Bahan (Opsional)</label>
+              <div class="input-group">
+                <span class="prefix">Rp</span>
+                <input type="number" id="lainVal" class="has-prefix" min="0" step="1000" oninput="calculate()" />
+              </div>
+            </div>
+            <div class="field">
+              <label for="lainMode">Cara Hitung Biaya Lainnya</label>
+              <select id="lainMode" onchange="calculate()">
+                <option value="batch">Borongan (Total Batch)</option>
+                <option value="pcs">Per Pcs</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- KOLOM KANAN: RINGKASAN HPP, HARGA JUAL & PAJAK -->
+    <div class="sticky-panel">
+
+      <!-- Ringkasan HPP -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Ringkasan Modal (HPP)</div>
+          <span class="badge-sub"><span class="pcsCountLbl">0</span> Pcs</span>
+        </div>
+
+        <div class="kpi-grid">
+          <div class="kpi-box dark">
+            <div class="kpi-label">HPP / Modal Per Pcs</div>
+            <div class="kpi-val" id="kpiHppPcs">Rp 0</div>
+          </div>
+          <div class="kpi-box">
+            <div class="kpi-label">Total Modal 1 Batch</div>
+            <div class="kpi-val" id="kpiHppTotal" style="color: var(--primary);">Rp 0</div>
+          </div>
+        </div>
+
+        <table class="breakdown-table">
+          <thead>
+            <tr>
+              <th>Komponen Biaya</th>
+              <th class="num">Per Pcs</th>
+              <th class="num">Total Batch</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1. Kain Jeans</td>
+              <td class="num" id="tblKainPcs">Rp 0</td>
+              <td class="num" id="tblKainTot">Rp 0</td>
+            </tr>
+            <tr>
+              <td>2. Ongkos Jahit</td>
+              <td class="num" id="tblJahitPcs">Rp 0</td>
+              <td class="num" id="tblJahitTot">Rp 0</td>
+            </tr>
+            <tr>
+              <td>3. Aksesoris</td>
+              <td class="num" id="tblAccPcs">Rp 0</td>
+              <td class="num" id="tblAccTot">Rp 0</td>
+            </tr>
+            <tr>
+              <td>4. Ongkos Cucian</td>
+              <td class="num" id="tblCuciPcs">Rp 0</td>
+              <td class="num" id="tblCuciTot">Rp 0</td>
+            </tr>
+            <tr>
+              <td>5. Ongkos Finishing</td>
+              <td class="num" id="tblFinPcs">Rp 0</td>
+              <td class="num" id="tblFinTot">Rp 0</td>
+            </tr>
+            <tr>
+              <td>6. Biaya Lainnya</td>
+              <td class="num" id="tblLainPcs">Rp 0</td>
+              <td class="num" id="tblLainTot">Rp 0</td>
+            </tr>
+            <tr class="total-row">
+              <td>TOTAL HPP</td>
+              <td class="num" id="tblTotalPcs">Rp 0</td>
+              <td class="num" id="tblTotalTot">Rp 0</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- Visual Komposisi Biaya -->
+        <div class="cost-bar">
+          <div id="barKain" style="background: #1e3a8a; width: 0%;"></div>
+          <div id="barJahit" style="background: #3b82f6; width: 0%;"></div>
+          <div id="barAcc" style="background: #06b6d4; width: 0%;"></div>
+          <div id="barCuci" style="background: #10b981; width: 0%;"></div>
+          <div id="barFin" style="background: #f59e0b; width: 0%;"></div>
+          <div id="barLain" style="background: #94a3b8; width: 0%;"></div>
+        </div>
+        <div class="legend">
+          <span><i class="dot" style="background:#1e3a8a"></i>Kain <b id="pctKain">0%</b></span>
+          <span><i class="dot" style="background:#3b82f6"></i>Jahit <b id="pctJahit">0%</b></span>
+          <span><i class="dot" style="background:#06b6d4"></i>Aksesoris <b id="pctAcc">0%</b></span>
+          <span><i class="dot" style="background:#10b981"></i>Cuci <b id="pctCuci">0%</b></span>
+          <span><i class="dot" style="background:#f59e0b"></i>Finish <b id="pctFin">0%</b></span>
+        </div>
+      </div>
+
+      <!-- Harga Jual & Pajak -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">6. Harga Jual & Potongan Pajak</div>
+        </div>
+
+        <div class="tabs no-print">
+          <button type="button" class="tab-btn active" id="tabJualManual" onclick="setJualMode('manual')">Input Harga Jual</button>
+          <button type="button" class="tab-btn" id="tabJualTarget" onclick="setJualMode('target')">Hitung dari Target Laba</button>
+        </div>
+
+        <div class="field" id="wrapHargaManual" style="margin-bottom: 12px;">
+          <label for="hargaJualInput">Harga Jual Per Pcs (Sebelum Dikurangi Pajak)</label>
+          <div class="input-group">
+            <span class="prefix">Rp</span>
+            <input type="number" id="hargaJualInput" class="has-both" min="0" step="1000" oninput="calculate()" />
+            <span class="suffix">/ pcs</span>
+          </div>
+        </div>
+
+        <div class="hidden" id="wrapTargetLaba" style="margin-bottom: 12px;">
+          <div class="grid-2">
+            <div class="field">
+              <label for="targetLabaTipe">Jenis Target Laba Bersih</label>
+              <select id="targetLabaTipe" onchange="calculate()">
+                <option value="rp">Nominal Rupiah / Pcs</option>
+                <option value="pct">Persen (%) dari HPP</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="targetLabaVal">Nilai Target Laba Bersih</label>
+              <input type="number" id="targetLabaVal" min="0" step="1000" oninput="calculate()" />
+            </div>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="field">
+            <label for="pajakPct">Tarif Pajak (%)</label>
+            <div class="input-group">
+              <input type="number" id="pajakPct" class="has-suffix" min="0" max="99" step="0.1" oninput="calculate()" />
+              <span class="suffix">%</span>
+            </div>
+            <div class="preset-pills no-print">
+              <button type="button" class="pill" onclick="setTax(0)">0%</button>
+              <button type="button" class="pill" onclick="setTax(0.5)">0.5% UMKM</button>
+              <button type="button" class="pill" onclick="setTax(11)">11% PPN</button>
+              <button type="button" class="pill" onclick="setTax(12)">12%</button>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="pajakMetode">Metode Hitung Pajak</label>
+            <select id="pajakMetode" onchange="calculate()">
+              <option value="direct">Potong Langsung (Harga × Pajak%)</option>
+              <option value="inclusive">Harga Termasuk PPN (DPP 100/(100+Pajak%))</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Hasil Perhitungan Penjualan -->
+        <div class="result-box profit" id="resultBox">
+          <div class="result-row">
+            <span>Harga Jual / Pcs</span>
+            <strong id="resHargaJual">Rp 0</strong>
+          </div>
+          <div class="result-row" style="color: var(--danger);">
+            <span>Dikurangi Pajak (<span id="resPajakPctLbl">0%</span>)</span>
+            <strong id="resPajakRp">- Rp 0</strong>
+          </div>
+          <div class="result-row">
+            <span>Harga Jual Bersih (Setelah Pajak)</span>
+            <strong id="resNetSales">Rp 0</strong>
+          </div>
+          <div class="result-row">
+            <span>Modal (HPP) / Pcs</span>
+            <strong id="resHppPcs">- Rp 0</strong>
+          </div>
+
+          <div class="result-row big">
+            <span id="resStatusLabel">Laba Bersih / Pcs</span>
+            <span id="resLabaPcs">Rp 0</span>
+          </div>
+          <div class="result-row" style="font-size: 0.8rem; opacity: 0.9;">
+            <span>Margin Bersih: <b id="resMargin">0%</b> | ROI Modal: <b id="resRoi">0%</b></span>
+            <span>Total Laba (<span class="pcsCountLbl">0</span> pcs): <b id="resLabaTotal">Rp 0</b></span>
+          </div>
+          <div class="result-row" style="font-size: 0.8rem; opacity: 0.9;">
+            <span>Total Omzet Kotor: <b id="resOmzetKotor">Rp 0</b></span>
+            <span>Total Setoran Pajak: <b id="resPajakTotal">Rp 0</b></span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast">Tersalin!</div>
+
 <script>
-const initialOrders=["587033954513683897", "587019079565149285", "587015198928831765", "587009700574561982", "586983901677520345", "586981260842010062", "586962801950950560", "586962105742755083", "586961871923939313", "586951689086338514", "586949660036727835", "586927154757797780", "586907983517812215", "586902606951188174", "586875007209866738", "586869826289305312", "586860076275893932", "586854984579975069", "586842861496862324", "586840206920549643", "586838339457091322", "586837498859652993", "586832168997127604", "586795570842011592", "586774887956972996", "586774827033462212", "586769386691069923", "586759177796028242", "586751628596446750", "586733876191266029", "586727448632001556", "586721925235377166", "586666127578268975", "586526348345640078", "586526348345640078", "586526159439890052", "586450917665310133", "586204037468948019"];
-let orders=JSON.parse(localStorage.getItem('gr_orders')||'null')||initialOrders.map(x=>({order:String(x),resi:''}));
-let returns=JSON.parse(localStorage.getItem('gr_returns')||'[]'), stream=null, detector=null, scanning=false;
-{const m=new Map();for(const o of orders){const k=norm(o.order);if(!k)continue;const prev=m.get(k)||{order:String(o.order).trim(),resi:''};m.set(k,{order:prev.order,resi:String(o.resi||'').trim()||prev.resi});}orders=[...m.values()];}
-const $=id=>document.getElementById(id);
-function save(){localStorage.setItem('gr_orders',JSON.stringify(orders));localStorage.setItem('gr_returns',JSON.stringify(returns));}
-function norm(v){return String(v??'').toUpperCase().replace(/[^A-Z0-9]/g,'')}
-function showView(v){document.querySelectorAll('.view').forEach(x=>x.classList.toggle('active',x.id===v));document.querySelectorAll('.nav button').forEach(x=>x.classList.toggle('active',x.dataset.view===v));$('pageTitle').textContent=({home:'Ringkasan hari ini',scan:'Scan retur',returns:'Riwayat retur',data:'Data Pixel'})[v];if(v==='data')renderOrders();if(v==='returns')renderReturns();}
-function render(){let today=new Date().toLocaleDateString('en-CA');let todays=returns.filter(x=>x.date===today);$('countToday').textContent=todays.length;$('countPending').textContent=todays.filter(x=>x.status!=='Selesai').length;$('countDone').textContent=todays.filter(x=>x.status==='Selesai').length;$('orderCount').textContent=orders.length;$('dataMessage').textContent=orders.length?`Database berisi ${orders.length} pesanan. Siap dicocokkan dengan nomor pesanan atau resi.`:'Belum ada data pesanan. Unggah file Excel/CSV agar scan label bisa dicocokkan.';let recent=returns.slice(0,4);$('recent').className=recent.length?'':'empty';$('recent').innerHTML=recent.length?recent.map(returnCard).join(''):'<b>Belum ada retur</b>Paket retur yang dipindai akan muncul di sini.';}
-function returnCard(r){return `<div style="padding:12px 0;border-bottom:1px solid var(--line)"><b>${esc(r.input)}</b><div class="muted">${esc(r.order||'Tidak ditemukan')} · ${esc(r.source)} · ${esc(r.time)}</div><span class="pill ${r.status==='Tidak ditemukan'?'red':''}">${esc(r.status)}</span></div>`}
-function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
-function matchCode(value,source='manual'){let code=String(value||'').trim();if(!code){$('matchResult').innerHTML='<div class="result bad">Masukkan nomor pesanan atau resi terlebih dahulu.</div>';return;}let n=norm(code);let found=orders.find(o=>norm(o.order)===n||norm(o.resi)===n);let r={id:Date.now(),input:code,order:found?.order||'',resi:found?.resi||'',status:found?'Menunggu pengecekan':'Tidak ditemukan',source,date:new Date().toLocaleDateString('en-CA'),time:new Date().toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'})};returns.unshift(r);save();$('matchResult').innerHTML=found?`<div class="result"><h3>✓ Data cocok</h3><b>Pesanan:</b> ${esc(found.order)}<br><b>Resi:</b> ${esc(found.resi||'Belum tersedia')}<p class="muted">Status retur: Menunggu pengecekan</p><button class="primary" onclick="setDone(${r.id})">Tandai selesai</button></div>`:`<div class="result bad"><h3>! Tidak ditemukan</h3>Nomor ini tidak ada di database Pixel. Periksa input atau unggah data terbaru.</div>`;$('manualCode').value=code;render();}
-function setDone(id){let r=returns.find(x=>x.id===id);if(r){r.status='Selesai';save();render();renderReturns();$('matchResult').innerHTML='<div class="result"><b>✓ Retur ditandai selesai.</b></div>';}}
-function renderOrders(){$('ordersTable').innerHTML=orders.slice(0,250).map(o=>`<tr><td>${esc(o.order)}</td><td>${esc(o.resi||'—')}</td></tr>`).join('')||'<tr><td colspan="2">Belum ada data</td></tr>';}
-function renderReturns(){let q=norm($('filterReturns')?.value||'');let a=returns.filter(r=>!q||norm(r.input).includes(q)||norm(r.order).includes(q)||norm(r.resi).includes(q));$('returnList').className=a.length?'':'empty';$('returnList').innerHTML=a.length?a.map(r=>`<div style="padding:13px 0;border-bottom:1px solid var(--line)">${returnCard(r)}${r.status!=='Selesai'?`<button class="secondary" onclick="setDone(${r.id})">Tandai selesai</button>`:''}</div>`).join(''):'Belum ada data retur.';}
-$('fileInput').addEventListener('change',async e=>{const f=e.target.files?.[0];if(!f)return;try{if(!window.XLSX)throw Error('Modul pembaca Excel belum termuat. Buka aplikasi dengan internet aktif lalu coba lagi.');const wb=XLSX.read(await f.arrayBuffer(),{type:'array',cellText:true,cellDates:false});if(!wb.SheetNames.length)throw Error('File tidak memiliki lembar kerja.');const sheet=wb.Sheets[wb.SheetNames[0]];const data=XLSX.utils.sheet_to_json(sheet,{defval:'',raw:false,blankrows:false});if(!data.length)throw Error('File kosong atau format tidak terbaca.');const keys=Object.keys(data[0]);const findKey=patterns=>keys.find(k=>patterns.some(p=>norm(k)===norm(p)))||keys.find(k=>patterns.some(p=>norm(k).includes(norm(p))));const ok=findKey(['Order ID','OrderID','Order Number','Nomor Pesanan','Kode Pesanan']);const rk=findKey(['Tracking ID','TrackingID','Tracking Number','Tracking No','Nomor Resi','Resi','Waybill','AWB']);if(!ok)throw Error('Kolom Order ID tidak ditemukan. Pastikan file laporan Pixel asli memiliki kolom Order ID.');const isDescription=v=>/^(platform unique order id|current order status|platform tracking id|tracking id|order id|nomor pesanan)[. :]*$/i.test(String(v||'').trim());const map=new Map(orders.map(o=>[norm(o.order),{...o,order:String(o.order||'').trim(),resi:String(o.resi||'').trim()}]));let imported=0,withResi=0,skipped=0;for(const row of data){const order=String(row[ok]??'').trim();if(!order||isDescription(order)){skipped++;continue;}const key=norm(order);if(!key){skipped++;continue;}const resi=rk?String(row[rk]??'').trim():'';const previous=map.get(key)||{order,resi:''};map.set(key,{order:previous.order||order,resi:resi||previous.resi||''});imported++;if(resi)withResi++;}if(!imported)throw Error('Tidak ada baris pesanan yang valid ditemukan. Periksa isi laporan Pixel.');orders=[...map.values()];save();render();renderOrders();showView('data');alert(`Unggah berhasil!\n${imported} baris pesanan dibaca\n${orders.length} pesanan unik di database\n${withResi} baris memiliki Tracking ID/resi\n${skipped} baris kosong/keterangan dilewati.`);}catch(err){alert('Gagal mengunggah laporan Pixel: '+(err?.message||err));}finally{e.target.value='';}});
-async function startCamera(){if(!navigator.mediaDevices?.getUserMedia){$('cameraStatus').textContent='Browser tidak mendukung akses kamera. Gunakan input manual.';return;}if(!('BarcodeDetector'in window)){ $('cameraStatus').textContent='Browser ini belum mendukung pemindai barcode otomatis. Coba Chrome terbaru atau gunakan input manual.';return;}try{detector=new BarcodeDetector({formats:['qr_code','code_128','code_39','ean_13','ean_8','itf','upc_a','upc_e']});stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'}},audio:false});$('video').srcObject=stream;$('video').classList.remove('hidden');$('cameraHint').classList.add('hidden');scanning=true;$('cameraStatus').textContent='Kamera aktif. Arahkan barcode ke kamera.';scanLoop();}catch(e){$('cameraStatus').textContent='Kamera tidak dapat dibuka: '+e.message+'. Pastikan izin kamera aktif dan aplikasi dibuka melalui HTTPS.';}}
-async function scanLoop(){if(!scanning)return;try{let codes=await detector.detect($('video'));if(codes.length){let val=codes[0].rawValue;stopCamera();matchCode(val,'kamera');return;}}catch(e){}requestAnimationFrame(scanLoop);}
-function stopCamera(){scanning=false;if(stream)stream.getTracks().forEach(t=>t.stop());stream=null;$('video').classList.add('hidden');$('cameraHint').classList.remove('hidden');$('cameraHint').innerHTML='Kamera dimatikan';}
-$('startCamera').onclick=startCamera;$('stopCamera').onclick=stopCamera;
-function exportCSV(){let rows=[['Tanggal','Waktu','Input','Nomor Pesanan','Resi','Status','Sumber'],...returns.map(r=>[r.date,r.time,r.input,r.order,r.resi,r.status,r.source])];let csv=rows.map(row=>row.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(',')).join('\n');let a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'}));a.download='laporan-retur.csv';a.click();URL.revokeObjectURL(a.href);}
-$('today').textContent=new Date().toLocaleDateString('id-ID',{day:'numeric',month:'short'});render();if('serviceWorker'in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('./sw.js').catch(()=>{});
-</script></body></html>
+  const STORAGE_KEY = 'hpp_jeans_calculator_v1';
+
+  let jahitMode = 'pcs';     // 'pcs' | 'borongan' | 'gabung'
+  let jualMode = 'manual';   // 'manual' | 'target'
+  let accessories = [];
+
+  const fmtRp = (num) => {
+    const rounded = Math.round(num || 0);
+    const sign = rounded < 0 ? '-' : '';
+    return sign + 'Rp ' + Math.abs(rounded).toLocaleString('id-ID');
+  };
+
+  const fmtNum = (num, dec = 2) => {
+    return Number(num || 0).toLocaleString('id-ID', {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: dec
+    });
+  };
+
+  const val = (id) => {
+    const v = parseFloat(document.getElementById(id).value);
+    return isNaN(v) ? 0 : v;
+  };
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2200);
+  }
+
+  function setJahitMode(mode) {
+    jahitMode = mode;
+    document.getElementById('tabJahitPcs').classList.toggle('active', mode === 'pcs');
+    document.getElementById('tabJahitBorongan').classList.toggle('active', mode === 'borongan');
+    document.getElementById('tabJahitGabung').classList.toggle('active', mode === 'gabung');
+
+    document.getElementById('wrapJahitPcs').classList.toggle('hidden', mode === 'borongan');
+    document.getElementById('wrapJahitBorongan').classList.toggle('hidden', mode === 'pcs');
+    calculate();
+  }
+
+  function setJualMode(mode) {
+    jualMode = mode;
+    document.getElementById('tabJualManual').classList.toggle('active', mode === 'manual');
+    document.getElementById('tabJualTarget').classList.toggle('active', mode === 'target');
+
+    document.getElementById('wrapHargaManual').classList.toggle('hidden', mode === 'target');
+    document.getElementById('wrapTargetLaba').classList.toggle('hidden', mode === 'manual');
+    calculate();
+  }
+
+  function setTax(pct) {
+    document.getElementById('pajakPct').value = pct;
+    calculate();  }
+
+  function renderAccessories() {
+    const container = document.getElementById('accList');
+    container.innerHTML = '';
+
+    accessories.forEach((item, idx) => {
+      const row = document.createElement('div');
+      row.className = 'acc-item';
+      row.innerHTML = `
+        <input type="text" class="acc-name" placeholder="Nama aksesoris" value="${escapeHtml(item.name)}"
+          oninput="updateAcc(${idx}, 'name', this.value)" />
+        <input type="number" placeholder="Harga" min="0" step="100" value="${item.price}"
+          oninput="updateAcc(${idx}, 'price', parseFloat(this.value) || 0)" />
+        <input type="number" placeholder="Qty" min="0" step="0.1" value="${item.qty}"
+          oninput="updateAcc(${idx}, 'qty', parseFloat(this.value) || 0)" />
+        <select onchange="updateAcc(${idx}, 'mode', this.value)">
+          <option value="pcs" ${item.mode === 'pcs' ? 'selected' : ''}>Per Pcs</option>
+          <option value="batch" ${item.mode === 'batch' ? 'selected' : ''}>Borongan Batch</option>
+        </select>
+        <button type="button" class="btn-danger-sm acc-del no-print" onclick="removeAcc(${idx})">Hapus</button>
+      `;
+      container.appendChild(row);
+    });
+  }
+
+  function escapeHtml(str) {
+    return String(str || '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  function addAccessory(name = '', price = 0, qty = 1, mode = 'pcs') {
+    accessories.push({ name, price, qty, mode });
+    renderAccessories();
+    calculate();
+  }
+
+  function updateAcc(idx, field, value) {
+    if (!accessories[idx]) return;
+    accessories[idx][field] = value;
+    calculate();
+  }
+
+  function removeAcc(idx) {
+    accessories.splice(idx, 1);
+    renderAccessories();
+    calculate();
+  }
+
+  function calculate() {
+    // 1. Kain
+    const kainHarga = val('kainHarga');
+    const kainBeli = val('kainBeli');
+    const kainSatuan = document.getElementById('kainSatuan').value;
+    document.getElementById('lblSatuan').textContent = kainSatuan;
+
+    const rawJadi = val('jadiPcs');
+    const pcs = rawJadi > 0 ? rawJadi : 1;
+
+    document.querySelectorAll('.pcsCountLbl').forEach(el => {
+      el.textContent = rawJadi > 0 ? fmtNum(rawJadi, 0) : '0';
+    });
+
+    const kainTotal = kainHarga * kainBeli;
+    const kainPerPcs = rawJadi > 0 ? kainTotal / pcs : 0;
+    const kainPakaiPerPcs = rawJadi > 0 ? kainBeli / pcs : 0;
+
+    document.getElementById('kainTotalText').textContent = fmtRp(kainTotal);
+    document.getElementById('kainPakaiText').textContent = `${fmtNum(kainPakaiPerPcs, 2)} ${kainSatuan} / pcs`;
+    document.getElementById('kainPerPcsText').textContent = fmtRp(kainPerPcs);
+    document.getElementById('badgeKain').textContent = `${fmtRp(kainPerPcs)} / pcs`;
+
+    // 2. Ongkos Jahit
+    const jahitPcsVal = val('jahitPcsVal');
+    const jahitBoronganVal = val('jahitBoronganVal');
+    let jahitTotal = 0;
+    let jahitPerPcs = 0;
+
+    if (jahitMode === 'pcs') {
+      jahitPerPcs = jahitPcsVal;
+      jahitTotal = jahitPcsVal * rawJadi;
+    } else if (jahitMode === 'borongan') {
+      jahitTotal = jahitBoronganVal;
+      jahitPerPcs = rawJadi > 0 ? jahitBoronganVal / pcs : 0;
+    } else {
+      jahitTotal = jahitBoronganVal + (jahitPcsVal * rawJadi);
+      jahitPerPcs = rawJadi > 0 ? jahitTotal / pcs : 0;
+    }
+
+    document.getElementById('jahitTotalText').textContent = fmtRp(jahitTotal);
+    document.getElementById('jahitPerPcsText').textContent = fmtRp(jahitPerPcs);
+    document.getElementById('badgeJahit').textContent = `${fmtRp(jahitPerPcs)} / pcs`;
+
+    // 3. Aksesoris
+    let accTotal = 0;
+    let accPerPcs = 0;
+
+    accessories.forEach(item => {
+      const sub = (Number(item.price) || 0) * (Number(item.qty) || 0);
+      if (item.mode === 'pcs') {
+        accPerPcs += sub;
+        accTotal += sub * rawJadi;
+      } else {
+        accTotal += sub;
+        accPerPcs += rawJadi > 0 ? sub / pcs : 0;
+      }
+    });
+
+    document.getElementById('accTotalText').textContent = fmtRp(accTotal);
+    document.getElementById('badgeAksesoris').textContent = `${fmtRp(accPerPcs)} / pcs`;
+
+    // 4. Cucian
+    const cuciVal = val('cuciVal');
+    const cuciMode = document.getElementById('cuciMode').value;
+    const cuciPerPcs = cuciMode === 'pcs' ? cuciVal : (rawJadi > 0 ? cuciVal / pcs : 0);
+    const cuciTotal = cuciMode === 'pcs' ? cuciVal * rawJadi : cuciVal;
+    document.getElementById('badgeCuci').textContent = `${fmtRp(cuciPerPcs)} / pcs`;
+
+    // 5. Finishing
+    const finishVal = val('finishVal');
+    const finishMode = document.getElementById('finishMode').value;
+    const finishPerPcs = finishMode === 'pcs' ? finishVal : (rawJadi > 0 ? finishVal / pcs : 0);
+    const finishTotal = finishMode === 'pcs' ? finishVal * rawJadi : finishVal;
+    document.getElementById('badgeFinish').textContent = `${fmtRp(finishPerPcs)} / pcs`;
+
+    // 6. Biaya Lainnya
+    const lainVal = val('lainVal');
+    const lainMode = document.getElementById('lainMode').value;
+    const lainPerPcs = lainMode === 'pcs' ? lainVal : (rawJadi > 0 ? lainVal / pcs : 0);
+    const lainTotal = lainMode === 'pcs' ? lainVal * rawJadi : lainVal;
+
+    // Total HPP
+    const hppPerPcs = kainPerPcs + jahitPerPcs + accPerPcs + cuciPerPcs + finishPerPcs + lainPerPcs;
+    const hppTotal = kainTotal + jahitTotal + accTotal + cuciTotal + finishTotal + lainTotal;
+
+    document.getElementById('kpiHppPcs').textContent = fmtRp(hppPerPcs);
+    document.getElementById('kpiHppTotal').textContent = fmtRp(hppTotal);
+
+    document.getElementById('tblKainPcs').textContent = fmtRp(kainPerPcs);
+    document.getElementById('tblKainTot').textContent = fmtRp(kainTotal);
+    document.getElementById('tblJahitPcs').textContent = fmtRp(jahitPerPcs);
+    document.getElementById('tblJahitTot').textContent = fmtRp(jahitTotal);
+    document.getElementById('tblAccPcs').textContent = fmtRp(accPerPcs);
+    document.getElementById('tblAccTot').textContent = fmtRp(accTotal);
+    document.getElementById('tblCuciPcs').textContent = fmtRp(cuciPerPcs);
+    document.getElementById('tblCuciTot').textContent = fmtRp(cuciTotal);
+    document.getElementById('tblFinPcs').textContent = fmtRp(finishPerPcs);
+    document.getElementById('tblFinTot').textContent = fmtRp(finishTotal);
+    document.getElementById('tblLainPcs').textContent = fmtRp(lainPerPcs);
+    document.getElementById('tblLainTot').textContent = fmtRp(lainTotal);
+    document.getElementById('tblTotalPcs').textContent = fmtRp(hppPerPcs);
+    document.getElementById('tblTotalTot').textContent = fmtRp(hppTotal);
+
+    // Komposisi bar
+    const pct = (part) => hppPerPcs > 0 ? (part / hppPerPcs) * 100 : 0;
+    const pKain = pct(kainPerPcs), pJahit = pct(jahitPerPcs), pAcc = pct(accPerPcs),
+          pCuci = pct(cuciPerPcs), pFin = pct(finishPerPcs), pLain = pct(lainPerPcs);
+
+    document.getElementById('barKain').style.width = pKain + '%';
+    document.getElementById('barJahit').style.width = pJahit + '%';
+    document.getElementById('barAcc').style.width = pAcc + '%';
+    document.getElementById('barCuci').style.width = pCuci + '%';
+    document.getElementById('barFin').style.width = pFin + '%';
+    document.getElementById('barLain').style.width = pLain + '%';
+
+    document.getElementById('pctKain').textContent = fmtNum(pKain, 1) + '%';
+    document.getElementById('pctJahit').textContent = fmtNum(pJahit, 1) + '%';
+    document.getElementById('pctAcc').textContent = fmtNum(pAcc, 1) + '%';
+    document.getElementById('pctCuci').textContent = fmtNum(pCuci, 1) + '%';
+    document.getElementById('pctFin').textContent = fmtNum(pFin, 1) + '%';
+
+    // Harga Jual & Pajak
+    const pajakPct = val('pajakPct');
+    const taxRate = pajakPct / 100;
+    const pajakMetode = document.getElementById('pajakMetode').value;
+
+    let hargaJual = 0;
+    if (jualMode === 'manual') {
+      hargaJual = val('hargaJualInput');
+    } else {
+      const targetTipe = document.getElementById('targetLabaTipe').value;
+      const targetVal = val('targetLabaVal');
+      const targetLabaRp = targetTipe === 'rp' ? targetVal : (hppPerPcs * (targetVal / 100));
+      const desiredNetSales = hppPerPcs + targetLabaRp;
+
+      if (pajakMetode === 'direct') {
+        hargaJual = taxRate < 1 ? desiredNetSales / (1 - taxRate) : desiredNetSales;
+      } else {
+        hargaJual = desiredNetSales * (1 + taxRate);
+      }
+    }
+
+    let pajakRp = 0;
+    let netSales = 0;
+    if (pajakMetode === 'direct') {
+      pajakRp = hargaJual * taxRate;
+      netSales = hargaJual - pajakRp;
+    } else {
+      const dpp = hargaJual / (1 + taxRate);
+      pajakRp = hargaJual - dpp;
+      netSales = dpp;
+    }
+
+    const labaPcs = netSales - hppPerPcs;
+    const labaTotal = labaPcs * rawJadi;
+    const omzetKotor = hargaJual * rawJadi;
+    const pajakTotal = pajakRp * rawJadi;
+
+    const marginBersih = netSales > 0 ? (labaPcs / netSales) * 100 : 0;
+    const roi = hppPerPcs > 0 ? (labaPcs / hppPerPcs) * 100 : 0;
+
+    document.getElementById('resHargaJual').textContent = fmtRp(hargaJual);
+    document.getElementById('resPajakPctLbl').textContent = fmtNum(pajakPct, 2) + '%';
+    document.getElementById('resPajakRp').textContent = '- ' + fmtRp(pajakRp);
+    document.getElementById('resNetSales').textContent = fmtRp(netSales);
+    document.getElementById('resHppPcs').textContent = '- ' + fmtRp(hppPerPcs);
+    document.getElementById('resLabaPcs').textContent = fmtRp(labaPcs);
+    document.getElementById('resLabaTotal').textContent = fmtRp(labaTotal);
+    document.getElementById('resMargin').textContent = fmtNum(marginBersih, 1) + '%';
+    document.getElementById('resRoi').textContent = fmtNum(roi, 1) + '%';
+    document.getElementById('resOmzetKotor').textContent = fmtRp(omzetKotor);
+    document.getElementById('resPajakTotal').textContent = fmtRp(pajakTotal);
+
+    const resBox = document.getElementById('resultBox');
+    const lblStatus = document.getElementById('resStatusLabel');
+    if (labaPcs >= 0) {
+      resBox.className = 'result-box profit';
+      lblStatus.textContent = 'Laba Bersih / Pcs';
+    } else {
+      resBox.className = 'result-box loss';
+      lblStatus.textContent = 'Rugi / Pcs';
+    }
+
+    saveState();
+  }
+
+  function saveState() {
+    const state = {
+      productName: document.getElementById('productName').value,
+      catatan: document.getElementById('catatan').value,
+      kainHarga: document.getElementById('kainHarga').value,
+      kainBeli: document.getElementById('kainBeli').value,
+      kainSatuan: document.getElementById('kainSatuan').value,
+      jadiPcs: document.getElementById('jadiPcs').value,
+      jahitMode,
+      jahitPcsVal: document.getElementById('jahitPcsVal').value,
+      jahitBoronganVal: document.getElementById('jahitBoronganVal').value,
+      accessories,
+      cuciVal: document.getElementById('cuciVal').value,
+      cuciMode: document.getElementById('cuciMode').value,
+      finishVal: document.getElementById('finishVal').value,
+      finishMode: document.getElementById('finishMode').value,
+      lainVal: document.getElementById('lainVal').value,
+      lainMode: document.getElementById('lainMode').value,
+      jualMode,
+      hargaJualInput: document.getElementById('hargaJualInput').value,
+      targetLabaTipe: document.getElementById('targetLabaTipe').value,
+      targetLabaVal: document.getElementById('targetLabaVal').value,
+      pajakPct: document.getElementById('pajakPct').value,
+      pajakMetode: document.getElementById('pajakMetode').value
+    };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  }
+
+  function applyState(s) {
+    document.getElementById('productName').value = s.productName || '';
+    document.getElementById('catatan').value = s.catatan || '';
+    document.getElementById('kainHarga').value = s.kainHarga ?? '';
+    document.getElementById('kainBeli').value = s.kainBeli ?? '';
+    document.getElementById('kainSatuan').value = s.kainSatuan || 'Yard';
+    document.getElementById('jadiPcs').value = s.jadiPcs ?? '';
+    document.getElementById('jahitPcsVal').value = s.jahitPcsVal ?? '';
+    document.getElementById('jahitBoronganVal').value = s.jahitBoronganVal ?? '';
+    accessories = Array.isArray(s.accessories) ? s.accessories : [];
+    document.getElementById('cuciVal').value = s.cuciVal ?? '';
+    document.getElementById('cuciMode').value = s.cuciMode || 'pcs';
+    document.getElementById('finishVal').value = s.finishVal ?? '';
+    document.getElementById('finishMode').value = s.finishMode || 'pcs';
+    document.getElementById('lainVal').value = s.lainVal ?? '';
+    document.getElementById('lainMode').value = s.lainMode || 'batch';
+    document.getElementById('hargaJualInput').value = s.hargaJualInput ?? '';
+    document.getElementById('targetLabaTipe').value = s.targetLabaTipe || 'rp';
+    document.getElementById('targetLabaVal').value = s.targetLabaVal ?? '';
+    document.getElementById('pajakPct').value = s.pajakPct ?? 0;
+    document.getElementById('pajakMetode').value = s.pajakMetode || 'direct';
+
+    renderAccessories();
+    setJahitMode(s.jahitMode || 'pcs');
+    setJualMode(s.jualMode || 'manual');
+    calculate();
+  }
+
+  function loadSampleData() {
+    applyState({
+      productName: 'Jeans Slimfit Indigo 14oz',
+      catatan: 'Batch Produksi 100 Yard',
+      kainHarga: 48000,
+      kainBeli: 100,
+      kainSatuan: 'Yard',
+      jadiPcs: 75,
+      jahitMode: 'pcs',
+      jahitPcsVal: 22000,
+      jahitBoronganVal: 1650000,
+      accessories: [
+        { name: 'Resleting Kuningan YKK', price: 3500, qty: 1, mode: 'pcs' },
+        { name: 'Kancing Utama Jeans', price: 1200, qty: 1, mode: 'pcs' },
+        { name: 'Rivet / Paku Keling', price: 350, qty: 6, mode: 'pcs' },
+        { name: 'Leather Patch / Jacron', price: 2500, qty: 1, mode: 'pcs' },
+        { name: 'Label Merk + Size + Care', price: 1200, qty: 1, mode: 'pcs' },
+        { name: 'Kain Kantong Dalam (Pocket)', price: 3500, qty: 1, mode: 'pcs' },
+        { name: 'Benang Jahit (Borongan 1 Batch)', price: 225000, qty: 1, mode: 'batch' },
+        { name: 'Hangtag + Plastik Packing', price: 1800, qty: 1, mode: 'pcs' }
+      ],
+      cuciVal: 14000,
+      cuciMode: 'pcs',
+      finishVal: 5000,
+      finishMode: 'pcs',
+      lainVal: 150000,
+      lainMode: 'batch',
+      jualMode: 'manual',
+      hargaJualInput: 185000,
+      targetLabaTipe: 'rp',
+      targetLabaVal: 45000,
+      pajakPct: 11,
+      pajakMetode: 'direct'
+    });
+    showToast('Contoh hitungan dimuat!');
+  }
+
+  function clearAllData() {
+    applyState({
+      productName: '',
+      catatan: '',
+      kainHarga: 0,
+      kainBeli: 0,
+      kainSatuan: 'Yard',
+      jadiPcs: 1,
+      jahitMode: 'pcs',
+      jahitPcsVal: 0,
+      jahitBoronganVal: 0,
+      accessories: [
+        { name: 'Resleting', price: 0, qty: 1, mode: 'pcs' },
+        { name: 'Kancing & Rivet', price: 0, qty: 1, mode: 'pcs' }
+      ],
+      cuciVal: 0,
+      cuciMode: 'pcs',
+      finishVal: 0,
+      finishMode: 'pcs',
+      lainVal: 0,
+      lainMode: 'batch',
+      jualMode: 'manual',
+      hargaJualInput: 0,
+      targetLabaTipe: 'rp',
+      targetLabaVal: 0,
+      pajakPct: 0,
+      pajakMetode: 'direct'
+    });
+    showToast('Data dikosongkan');
+  }
+
+  function copyWhatsApp() {
+    const nama = document.getElementById('productName').value || 'Produksi Jeans';
+    const qty = document.getElementById('jadiPcs').value || '0';
+    const text =
+`*RINGKASAN HPP JEANS - ${nama}*
+Jumlah Jadi: ${qty} pcs
+
+*Rincian Modal (Per Pcs / Total):*
+• Kain (${document.getElementById('kainPakaiText').textContent}): ${document.getElementById('tblKainPcs').textContent} (${document.getElementById('tblKainTot').textContent})
+• Ongkos Jahit: ${document.getElementById('tblJahitPcs').textContent} (${document.getElementById('tblJahitTot').textContent})
+• Aksesoris: ${document.getElementById('tblAccPcs').textContent} (${document.getElementById('tblAccTot').textContent})
+• Ongkos Cucian: ${document.getElementById('tblCuciPcs').textContent} (${document.getElementById('tblCuciTot').textContent})
+• Ongkos Finishing: ${document.getElementById('tblFinPcs').textContent} (${document.getElementById('tblFinTot').textContent})
+• Biaya Lainnya: ${document.getElementById('tblLainPcs').textContent} (${document.getElementById('tblLainTot').textContent})
+
+*TOTAL HPP:* ${document.getElementById('kpiHppPcs').textContent}/pcs (Modal Batch: ${document.getElementById('kpiHppTotal').textContent})
+
+*Penjualan & Pajak:*
+• Harga Jual: ${document.getElementById('resHargaJual').textContent}/pcs
+• Pajak (${document.getElementById('resPajakPctLbl').textContent}): ${document.getElementById('resPajakRp').textContent}/pcs
+• Harga Bersih Setelah Pajak: ${document.getElementById('resNetSales').textContent}/pcs
+• *Laba Bersih: ${document.getElementById('resLabaPcs').textContent}/pcs* (Total: ${document.getElementById('resLabaTotal').textContent})`;
+
+    navigator.clipboard.writeText(text).then(() => {
+      showToast('Ringkasan berhasil disalin untuk WhatsApp!');
+    }).catch(() => {
+      alert(text);
+    });
+  }
+
+  // Init
+  (function init() {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      try {
+        applyState(JSON.parse(saved));
+        return;
+      } catch (e) {}
+    }
+    loadSampleData();
+  })();
+</script>
+
+<script>
+  if ("serviceWorker" in navigator && location.protocol === "https:") {
+    window.addEventListener("load", () => navigator.serviceWorker.register("./sw.js").catch(() => {}));
+  }
+</script>
+</body>
+</html>
