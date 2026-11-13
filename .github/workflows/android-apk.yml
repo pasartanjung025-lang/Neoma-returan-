@@ -1,4 +1,4 @@
-name: Build Android APK
+name: Build Kalkulator HPP Jeans APK
 on:
   push:
     branches: [main]
@@ -32,33 +32,21 @@ jobs:
         uses: android-actions/setup-android@v3
       - name: Accept Android SDK licences
         run: yes | sdkmanager --licenses > /dev/null || true
-      - name: Install Capacitor
+      - name: Install dependencies
         run: npm install
       - name: Prepare web assets
         run: npm run build
       - name: Generate Android project
         run: npx cap add android
-      - name: Add camera permission
-        run: |
-          python3 - <<'PY'
-          from pathlib import Path
-          p = Path('android/app/src/main/AndroidManifest.xml')
-          s = p.read_text()
-          marker = '<manifest xmlns:android="http://schemas.android.com/apk/res/android">'
-          additions = '\\n    <uses-permission android:name="android.permission.CAMERA" />\\n    <uses-feature android:name="android.hardware.camera" android:required="false" />'
-          if 'android.permission.CAMERA' not in s:
-              s = s.replace(marker, marker + additions)
-          p.write_text(s)
-          PY
       - name: Build debug APK
         run: |
           cd android
           chmod +x gradlew
-          ./gradlew assembleDebug
+          ./gradlew assembleDebug --no-daemon
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: Gudang-Retur-Android-APK
+          name: Kalkulator-HPP-Jeans-Android-APK
           path: android/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
           retention-days: 30
