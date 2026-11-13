@@ -41,6 +41,49 @@ jobs:
         run: npm run build
       - name: Generate Android project
         run: npx cap add android
+      - name: Add native Android PDF save bridge
+        run: |
+          mkdir -p android/app/src/main/java/com/pasartanjung025/hppjeans
+          cat > android/app/src/main/java/com/pasartanjung025/hppjeans/MainActivity.java <<'JAVA'
+          package com.pasartanjung025.hppjeans;
+
+          import android.content.Context;
+          import android.os.Bundle;
+          import android.print.PrintAttributes;
+          import android.print.PrintManager;
+          import android.webkit.JavascriptInterface;
+          import android.webkit.WebView;
+          import com.getcapacitor.BridgeActivity;
+
+          public class MainActivity extends BridgeActivity {
+              @Override
+              public void onCreate(Bundle savedInstanceState) {
+                  super.onCreate(savedInstanceState);
+                  getBridge().getWebView().addJavascriptInterface(new PdfBridge(this), "NeomaPdf");
+              }
+
+              private static class PdfBridge {
+                  private final MainActivity activity;
+                  PdfBridge(MainActivity activity) { this.activity = activity; }
+
+                  @JavascriptInterface
+                  public void print() {
+                      activity.runOnUiThread(() -> {
+                          PrintManager manager = (PrintManager) activity.getSystemService(Context.PRINT_SERVICE);
+                          if (manager == null || activity.getBridge() == null) return;
+                          WebView view = activity.getBridge().getWebView();
+                          if (view == null) return;
+                          PrintAttributes attrs = new PrintAttributes.Builder()
+                              .setMediaSize(PrintAttributes.MediaSize.ISO_A4)
+                              .setResolution(new PrintAttributes.Resolution("neoma_pdf", "HPP Neoma", 300, 300))
+                              .setMinMargins(PrintAttributes.Margins.NO_MARGINS)
+                              .build();
+                          manager.print("Rincian HPP Neoma", view.createPrintDocumentAdapter("Rincian HPP Neoma"), attrs);
+                      });
+                  }
+              }
+          }
+          JAVA
       - name: Apply NEOMA launcher icon
         run: |
           python -m pip install pillow
