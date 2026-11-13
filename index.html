@@ -1345,10 +1345,32 @@
     const selected=metrics.find(m=>m.key===activeDetailDiagramMetric)||metrics[0];
     const put=(id,value)=>{const el=document.getElementById('detail'+id.charAt(0).toUpperCase()+id.slice(1));if(el)el.textContent=value;};
     put('diagramMetricTitle',selected.name);put('diagramMetricPcs',fmtRp(selected.pcs));put('diagramMetricTotal',fmtRp(selected.total));put('diagramMetricPct',fmtNum(selected.pct,1)+'%');
+    // Tabel rincian diagram memakai sumber data metrics yang sama dengan diagram dan kalkulator.
+    const tableIds = {
+      kain:['detailTblKainPcs','detailTblKainTot'],
+      jahit:['detailTblJahitPcs','detailTblJahitTot'],
+      acc:['detailTblAccPcs','detailTblAccTot'],
+      cuci:['detailTblCuciPcs','detailTblCuciTot'],
+      finish:['detailTblFinPcs','detailTblFinTot'],
+      lain:['detailTblLainPcs','detailTblLainTot']
+    };
+    metrics.forEach(m=>{
+      const ids=tableIds[m.key];
+      if(!ids)return;
+      const perPcs=document.getElementById(ids[0]);
+      const batch=document.getElementById(ids[1]);
+      if(perPcs)perPcs.textContent=fmtRp(m.pcs);
+      if(batch)batch.textContent=fmtRp(m.total);
+    });
+    const sumPcs=metrics.reduce((sum,m)=>sum+(Number(m.pcs)||0),0);
+    const sumTotal=metrics.reduce((sum,m)=>sum+(Number(m.total)||0),0);
+    const totalPcs=document.getElementById('detailTblTotalPcs');
+    const totalBatch=document.getElementById('detailTblTotalTot');
+    if(totalPcs)totalPcs.textContent=fmtRp(sumPcs);
+    if(totalBatch)totalBatch.textContent=fmtRp(sumTotal);
     const graph=document.getElementById('detailDiagramGraphBars');
     if(graph) graph.innerHTML=metrics.map((m,i)=>'<div class="graph-row"><div class="graph-row-top"><strong>'+m.name+'</strong><span>'+fmtRp(m.pcs)+' · '+fmtNum(m.pct,1)+'%</span></div><div class="graph-track"><div class="graph-fill" style="width:'+Math.max(0,Math.min(100,m.pct))+'%;background:'+colors[i]+'"></div></div></div>').join('');
   }
-
   const STORAGE_KEY = 'hpp_jeans_calculator_v1';
 
   let jahitMode = 'pcs';     // 'pcs' | 'borongan' | 'gabung'
