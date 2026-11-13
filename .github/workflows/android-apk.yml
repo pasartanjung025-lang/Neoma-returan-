@@ -7,7 +7,7 @@ on:
       - 'manifest.webmanifest'
       - 'sw.js'
       - 'icon.svg'
-      - 'neoma-icon.png'
+      - 'neoma-icon.jpg'
       - 'package.json'
       - 'capacitor.config.json'
       - '.github/workflows/android-apk.yml'
@@ -48,7 +48,7 @@ jobs:
           from PIL import Image
           from pathlib import Path
           res = Path("android/app/src/main/res")
-          src = Image.open("neoma-icon.png").convert("RGBA")
+          src = Image.open("neoma-icon.jpg").convert("RGBA")
           # Legacy launcher icons
           for density, size in {
               "mdpi": 48, "hdpi": 72, "xhdpi": 96,
