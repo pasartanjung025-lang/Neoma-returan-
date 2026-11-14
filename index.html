@@ -1698,6 +1698,12 @@
     document.getElementById('kpiHppPcs').textContent = fmtRp(hppPerPcs);
     document.getElementById('kpiHppTotal').textContent = fmtRp(hppTotal);
 
+    // Sinkronkan ringkasan modal di layar Diagram langsung dari hasil hitung utama.
+    const detailHppPcs = document.getElementById('detailKpiHppPcs');
+    const detailHppTotal = document.getElementById('detailKpiHppTotal');
+    if (detailHppPcs) detailHppPcs.textContent = fmtRp(hppPerPcs);
+    if (detailHppTotal) detailHppTotal.textContent = fmtRp(hppTotal);
+
     document.getElementById('tblKainPcs').textContent = fmtRp(kainPerPcs);
     document.getElementById('tblKainTot').textContent = fmtRp(kainTotal);
     document.getElementById('tblJahitPcs').textContent = fmtRp(jahitPerPcs);
