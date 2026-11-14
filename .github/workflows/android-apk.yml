@@ -121,7 +121,6 @@ jobs:
           from pathlib import Path
           res = Path("android/app/src/main/res")
           src = Image.open("neoma-icon.jpg").convert("RGBA")
-          # Legacy launcher icons
           for density, size in {
               "mdpi": 48, "hdpi": 72, "xhdpi": 96,
               "xxhdpi": 144, "xxxhdpi": 192
@@ -130,7 +129,6 @@ jobs:
               folder.mkdir(parents=True, exist_ok=True)
               src.resize((size, size), Image.Resampling.LANCZOS).save(folder / "ic_launcher.png")
               src.resize((size, size), Image.Resampling.LANCZOS).save(folder / "ic_launcher_round.png")
-          # Adaptive icon: keep the complete circular logo inside Android's safe zone
           fg = Image.new("RGBA", (432, 432), (0, 0, 0, 0))
           logo = src.resize((288, 288), Image.Resampling.LANCZOS)
           fg.alpha_composite(logo, ((432-288)//2, (432-288)//2))
