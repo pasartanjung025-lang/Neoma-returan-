@@ -2174,7 +2174,22 @@
     saveState();
     buildNeomaPdfReport();
     if (window.NeomaPdf && typeof window.NeomaPdf.savePdf === 'function') {
-      window.NeomaPdf.savePdf();
+      const report = document.getElementById('neomaPdfReport');
+      const title = (document.getElementById('productName')?.value || 'Produksi-Jeans')
+        .replace(/[^a-z0-9_-]+/gi, '-').replace(/^-+|-+$/g, '') || 'Produksi-Jeans';
+      const html = '<!doctype html><html><head><meta charset="utf-8">' +
+        '<meta name="viewport" content="width=device-width,initial-scale=1">' +
+        '<title>Laporan HPP Neoma</title><style>' +
+        '@page{size:A4;margin:14mm 12mm}*{box-sizing:border-box}body{font:10pt/1.45 Arial,sans-serif;color:#172033;margin:0;background:#fff}' +
+        'h1{font-size:19pt;margin:0 0 3mm;color:#1e3a8a}h2{font-size:12pt;margin:7mm 0 2mm;padding-bottom:2mm;border-bottom:1px solid #cbd5e1;color:#1e3a8a}' +
+        '.pdf-sub{color:#64748b;margin-bottom:5mm}.pdf-meta{display:grid;grid-template-columns:1fr 1fr;gap:2mm 6mm;padding:4mm;background:#f1f5f9;border-radius:3mm}' +
+        'table{width:100%;border-collapse:collapse;margin:2mm 0 4mm;page-break-inside:auto}thead{display:table-header-group}tr{page-break-inside:avoid;break-inside:avoid}' +
+        'th,td{border:1px solid #cbd5e1;padding:2.2mm;text-align:left;vertical-align:top}th{background:#eaf0f8;color:#1e3a8a}.num{text-align:right;white-space:nowrap}' +
+        '.total td{font-weight:700;background:#eff6ff}.pdf-kpis{display:grid;grid-template-columns:1fr 1fr;gap:3mm;margin-top:4mm}' +
+        '.pdf-kpi{border:1px solid #cbd5e1;border-radius:3mm;padding:4mm;break-inside:avoid}.pdf-kpi strong{display:block;font-size:15pt;color:#1e3a8a;margin-top:1mm}' +
+        '.pdf-note{color:#64748b;font-size:8.5pt;margin-top:6mm}' +
+        '</style></head><body>' + (report ? report.innerHTML : '<h1>Laporan HPP Neoma</h1><p>Rincian laporan tidak ditemukan.</p>') + '</body></html>';
+      window.NeomaPdf.savePdf(html, 'Laporan-HPP-' + title + '.pdf');
       return;
     }
     window.print();
