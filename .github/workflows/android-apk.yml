@@ -49,20 +49,27 @@ jobs:
 
           import android.app.Activity;
           import android.content.Intent;
-          import android.graphics.Canvas;
-          import android.graphics.pdf.PdfDocument;
           import android.net.Uri;
           import android.os.Bundle;
+          import android.os.CancellationSignal;
+          import android.os.ParcelFileDescriptor;
+          import android.print.PrintAttributes;
+          import android.print.PrintDocumentAdapter;
+          import android.print.PrintDocumentInfo;
+          import android.print.PageRange;
           import android.webkit.JavascriptInterface;
           import android.webkit.WebView;
+          import android.webkit.WebViewClient;
           import android.widget.Toast;
-          import android.view.View;
           import com.getcapacitor.BridgeActivity;
-          import java.io.OutputStream;
 
           public class MainActivity extends BridgeActivity {
               private static final int CREATE_PDF_REQUEST = 7412;
+              private String pendingHtml;
+              private String pendingFilename = "Laporan-HPP-Neoma.pdf";
               private WebView pdfWebView;
+              private ParcelFileDescriptor outputFile;
+              private boolean printStarted = false;
 
               @Override
               public void onCreate(Bundle savedInstanceState) {
@@ -70,11 +77,14 @@ jobs:
                   getBridge().getWebView().addJavascriptInterface(new PdfBridge(this), "NeomaPdf");
               }
 
-              private void choosePdfLocation() {
+              private void choosePdfLocation(String html, String filename) {
+                  pendingHtml = html;
+                  pendingFilename = (filename == null || filename.trim().isEmpty())
+                      ? "Laporan-HPP-Neoma.pdf" : filename;
                   Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
                   intent.addCategory(Intent.CATEGORY_OPENABLE);
                   intent.setType("application/pdf");
-                  intent.putExtra(Intent.EXTRA_TITLE, "Rincian-HPP-Neoma.pdf");
+                  intent.putExtra(Intent.EXTRA_TITLE, pendingFilename);
                   startActivityForResult(intent, CREATE_PDF_REQUEST);
               }
 
@@ -86,64 +96,96 @@ jobs:
                       Toast.makeText(this, "Penyimpanan PDF dibatalkan", Toast.LENGTH_SHORT).show();
                       return;
                   }
-                  if (pdfWebView == null) {
-                      Toast.makeText(this, "Halaman PDF belum siap", Toast.LENGTH_LONG).show();
+                  if (pendingHtml == null || pendingHtml.trim().isEmpty()) {
+                      Toast.makeText(this, "Isi laporan PDF kosong. Silakan tekan PDF kembali.", Toast.LENGTH_LONG).show();
                       return;
                   }
-                  Uri destination = data.getData();
-                  pdfWebView.evaluateJavascript(
-                      "(function(){return Math.max(document.body.scrollHeight,document.documentElement.scrollHeight);})()",
-                      value -> {
-                          try {
-                              int cssHeight = Integer.parseInt(value.replace("\"", "").trim());
-                              writePdf(destination, Math.max(1, cssHeight));
-                          } catch (Exception e) {
-                              Toast.makeText(this, "Tidak dapat membaca rincian PDF", Toast.LENGTH_LONG).show();
-                          }
-                      });
+                  renderAndSavePdf(data.getData());
               }
 
-              private void writePdf(Uri destination, int cssHeight) {
-                  PdfDocument document = new PdfDocument();
+              private void renderAndSavePdf(Uri destination) {
                   try {
-                      WebView webView = pdfWebView;
-                      int width = Math.max(1, webView.getWidth());
-                      float density = getResources().getDisplayMetrics().density;
-                      int contentHeight = Math.max(1, (int) Math.ceil(cssHeight * density));
-                      webView.measure(
-                          View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY),
-                          View.MeasureSpec.makeMeasureSpec(contentHeight, View.MeasureSpec.EXACTLY));
-                      webView.layout(0, 0, width, contentHeight);
-
-                      final int pageWidth = 595;
-                      final int pageHeight = 842;
-                      float scale = (float) pageWidth / width;
-                      int sourcePageHeight = Math.max(1, (int) (pageHeight / scale));
-                      int pageCount = Math.max(1, (int) Math.ceil((double) contentHeight / sourcePageHeight));
-
-                      for (int pageNumber = 0; pageNumber < pageCount; pageNumber++) {
-                          PdfDocument.PageInfo info = new PdfDocument.PageInfo.Builder(
-                              pageWidth, pageHeight, pageNumber + 1).create();
-                          PdfDocument.Page page = document.startPage(info);
-                          Canvas canvas = page.getCanvas();
-                          canvas.save();
-                          canvas.scale(scale, scale);
-                          canvas.translate(0, -pageNumber * sourcePageHeight);
-                          webView.draw(canvas);
-                          canvas.restore();
-                          document.finishPage(page);
-                      }
-
-                      try (OutputStream output = getContentResolver().openOutputStream(destination, "w")) {
-                          if (output == null) throw new Exception("Folder tujuan tidak dapat dibuka");
-                          document.writeTo(output);
-                      }
-                      Toast.makeText(this, "PDF berhasil disimpan ke folder pilihan", Toast.LENGTH_LONG).show();
+                      printStarted = false;
+                      outputFile = getContentResolver().openFileDescriptor(destination, "w");
+                      if (outputFile == null) throw new Exception("Folder tujuan tidak dapat dibuka");
+                      pdfWebView = new WebView(this);
+                      pdfWebView.getSettings().setJavaScriptEnabled(false);
+                      pdfWebView.setWebViewClient(new WebViewClient() {
+                          @Override
+                          public void onPageFinished(WebView view, String url) {
+                              super.onPageFinished(view, url);
+                              if (printStarted) return;
+                              printStarted = true;
+                              writeUsingAndroidPrint(view);
+                          }
+                      });
+                      pdfWebView.loadDataWithBaseURL("https://localhost/", pendingHtml,
+                          "text/html", "UTF-8", null);
                   } catch (Exception e) {
-                      Toast.makeText(this, "Gagal menyimpan PDF: " + e.getMessage(), Toast.LENGTH_LONG).show();
-                  } finally {
-                      document.close();
+                      failPdf("Gagal menyiapkan PDF: " + e.getMessage());
                   }
+              }
+
+              private void writeUsingAndroidPrint(WebView view) {
+                  PrintDocumentAdapter adapter = view.createPrintDocumentAdapter("Laporan-HPP-Neoma");
+                  PrintAttributes attributes = new PrintAttributes.Builder()
+                      .setMediaSize(PrintAttributes.MediaSize.ISO_A4)
+                      .setResolution(new PrintAttributes.Resolution("neoma", "Neoma PDF", 300, 300))
+                      .setMinMargins(PrintAttributes.Margins.NO_MARGINS)
+                      .build();
+
+                  adapter.onLayout(null, attributes, new CancellationSignal(),
+                      new PrintDocumentAdapter.LayoutResultCallback() {
+                          @Override
+                          public void onLayoutFinished(PrintDocumentInfo info, boolean changed) {
+                              adapter.onWrite(new PageRange[]{PageRange.ALL_PAGES}, outputFile,
+                                  new CancellationSignal(), new PrintDocumentAdapter.WriteResultCallback() {
+                                      @Override
+                                      public void onWriteFinished(PageRange[] pages) {
+                                          closePdfWebView();
+                                          Toast.makeText(MainActivity.this,
+                                              "PDF lengkap berhasil disimpan. Silakan kirim file melalui WhatsApp.",
+                                              Toast.LENGTH_LONG).show();
+                                      }
+
+                                      @Override
+                                      public void onWriteFailed(CharSequence error) {
+                                          failPdf("Gagal membuat halaman PDF: " + error);
+                                      }
+
+                                      @Override
+                                      public void onWriteCancelled() {
+                                          failPdf("Pembuatan PDF dibatalkan");
+                                      }
+                                  });
+                          }
+
+                          @Override
+                          public void onLayoutFailed(CharSequence error) {
+                              failPdf("Gagal menyusun halaman PDF: " + error);
+                          }
+
+                          @Override
+                          public void onLayoutCancelled() {
+                              failPdf("Penyusunan PDF dibatalkan");
+                          }
+                      }, new Bundle());
+              }
+
+              private void failPdf(String message) {
+                  closePdfWebView();
+                  Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+              }
+
+              private void closePdfWebView() {
+                  try { if (outputFile != null) outputFile.close(); } catch (Exception ignored) {}
+                  outputFile = null;
+                  if (pdfWebView != null) {
+                      pdfWebView.stopLoading();
+                      pdfWebView.destroy();
+                      pdfWebView = null;
+                  }
+                  pendingHtml = null;
               }
 
               private static class PdfBridge {
@@ -151,14 +193,13 @@ jobs:
                   PdfBridge(MainActivity activity) { this.activity = activity; }
 
                   @JavascriptInterface
-                  public void savePdf() {
+                  public void savePdf(String html, String filename) {
                       activity.runOnUiThread(() -> {
-                          if (activity.getBridge() == null || activity.getBridge().getWebView() == null) {
-                              Toast.makeText(activity, "Halaman PDF belum siap", Toast.LENGTH_SHORT).show();
+                          if (html == null || html.trim().isEmpty()) {
+                              Toast.makeText(activity, "Laporan PDF kosong", Toast.LENGTH_LONG).show();
                               return;
                           }
-                          activity.pdfWebView = activity.getBridge().getWebView();
-                          activity.choosePdfLocation();
+                          activity.choosePdfLocation(html, filename);
                       });
                   }
               }
