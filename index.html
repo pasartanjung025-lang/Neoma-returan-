@@ -640,6 +640,28 @@
       .kpi-val { font-size:1.05rem; overflow-wrap:anywhere; }
       .bottom-nav { width:100%; border-radius:14px 14px 0 0; }
     }
+
+    /* Android WebView: beri ruang scroll yang cukup agar navigasi bawah
+       tidak menutupi kartu, tabel, tombol, maupun isi halaman paling bawah. */
+    html, body { min-height:100%; height:auto; overflow-y:auto !important; }
+    body { padding-bottom:calc(150px + env(safe-area-inset-bottom)) !important; }
+    .container { min-height:0; padding-bottom:28px; }
+    .app-screen, .main-hpp-summary { overflow:visible; }
+    .bottom-nav {
+      position:fixed; bottom:0; z-index:1000;
+      padding-bottom:calc(14px + env(safe-area-inset-bottom));
+      min-height:76px;
+    }
+    @media(max-width:600px) {
+      body { padding-bottom:calc(160px + env(safe-area-inset-bottom)) !important; }
+      .bottom-nav { min-height:82px; }
+    }
+    @media print {
+      html, body { height:auto !important; min-height:0 !important; overflow:visible !important; }
+      body { padding:0 !important; }
+      .container { padding:0 !important; }
+      .bottom-nav { display:none !important; }
+    }
   </style>
 </head>
 <body>
