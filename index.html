@@ -596,6 +596,30 @@
     .bottom-nav button .nav-icon { font-size:1.25rem; line-height:1.2; }
     .bottom-nav button.active { background:#eff6ff; color:#1e40af; }
     @media print { .bottom-nav { display:none !important; } body { padding-bottom:0; } }
+    /* Laporan PDF mandiri: jangan cetak layout aplikasi yang rawan memecah halaman kosong. */
+    #neomaPdfReport { display:none; }
+    @media print {
+      @page { size:A4; margin:14mm 12mm; }
+      html, body { height:auto !important; min-height:0 !important; overflow:visible !important; background:#fff !important; }
+      body { margin:0 !important; padding:0 !important; }
+      body > .container { display:none !important; }
+      #neomaPdfReport { display:block !important; width:100% !important; color:#172033 !important; font:10pt/1.45 Arial,sans-serif !important; }
+      #neomaPdfReport * { box-sizing:border-box; }
+      #neomaPdfReport h1 { font-size:19pt; margin:0 0 3mm; color:#1e3a8a; }
+      #neomaPdfReport h2 { font-size:12pt; margin:7mm 0 2mm; padding-bottom:2mm; border-bottom:1px solid #cbd5e1; color:#1e3a8a; }
+      #neomaPdfReport .pdf-sub { color:#64748b; margin-bottom:5mm; }
+      #neomaPdfReport .pdf-meta { display:grid; grid-template-columns:1fr 1fr; gap:2mm 6mm; padding:4mm; background:#f1f5f9; border-radius:3mm; }
+      #neomaPdfReport table { width:100%; border-collapse:collapse; margin:2mm 0 4mm; }
+      #neomaPdfReport th, #neomaPdfReport td { border:1px solid #cbd5e1; padding:2.2mm; text-align:left; vertical-align:top; }
+      #neomaPdfReport th { background:#eaf0f8; color:#1e3a8a; }
+      #neomaPdfReport .num { text-align:right; white-space:nowrap; }
+      #neomaPdfReport .total td { font-weight:700; background:#eff6ff; }
+      #neomaPdfReport .pdf-kpis { display:grid; grid-template-columns:1fr 1fr; gap:3mm; margin-top:4mm; }
+      #neomaPdfReport .pdf-kpi { border:1px solid #cbd5e1; border-radius:3mm; padding:4mm; }
+      #neomaPdfReport .pdf-kpi strong { display:block; font-size:15pt; color:#1e3a8a; margin-top:1mm; }
+      #neomaPdfReport tr, #neomaPdfReport .pdf-kpi, #neomaPdfReport .pdf-meta { break-inside:avoid; page-break-inside:avoid; }
+      #neomaPdfReport .pdf-note { color:#64748b; font-size:8.5pt; margin-top:6mm; }
+    }
 
     .diagram-overview { display:flex; align-items:center; justify-content:center; gap:22px; padding:18px 8px 12px; flex-wrap:wrap; }
     .donut-chart { width:190px; height:190px; flex:0 0 190px; border-radius:50%; display:grid; place-items:center; background:conic-gradient(#1e3a8a 0% 100%); position:relative; box-shadow:0 5px 18px rgba(30,58,138,.12); }
@@ -2088,15 +2112,71 @@
     showToast('Data dikosongkan');
   }
 
-  // Simpan PDF langsung melalui pemilih folder Android (Download/Dokumen).
+  // Buat laporan PDF mandiri dari hasil kalkulasi terkini, bukan mencetak layout aplikasi.
+  function buildNeomaPdfReport() {
+    const get = (id) => document.getElementById(id);
+    const val = (id) => get(id)?.value ?? '';
+    const txt = (id) => get(id)?.textContent?.trim() || '—';
+    const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    const report = get('neomaPdfReport') || document.createElement('div');
+    report.id = 'neomaPdfReport';
+    const nama = val('productName') || 'Produksi Jeans';
+    const catatan = val('catatan') || '—';
+    const qty = val('jadiPcs') || '0';
+    const rows = [
+      ['Kain Jeans','tblKainPcs','tblKainTot'],
+      ['Ongkos Jahit','tblJahitPcs','tblJahitTot'],
+      ['Aksesoris','tblAccPcs','tblAccTot'],
+      ['Ongkos Cucian','tblCuciPcs','tblCuciTot'],
+      ['Ongkos Finishing','tblFinPcs','tblFinTot'],
+      ['Biaya Lainnya','tblLainPcs','tblLainTot']
+    ];
+    const costRows = rows.map(r => '<tr><td>'+r[0]+'</td><td class="num">'+esc(txt(r[1]))+'</td><td class="num">'+esc(txt(r[2]))+'</td></tr>').join('');
+    const accessoryRows = (Array.isArray(accessories) ? accessories : []).map((x,i) =>
+      '<tr><td>'+(i+1)+'</td><td>'+esc(x.name || 'Aksesoris')+'</td><td class="num">Rp '+esc(fmtNum(Number(x.price)||0,0))+'</td><td class="num">'+esc(x.qty ?? 0)+'</td><td>'+esc(x.mode === 'pcs' ? 'Per pcs' : 'Borongan')+'</td></tr>'
+    ).join('');
+    const accessoriesTable = accessoryRows
+      ? '<table><thead><tr><th>No.</th><th>Nama</th><th class="num">Harga</th><th class="num">Qty</th><th>Basis</th></tr></thead><tbody>'+accessoryRows+'</tbody></table>'
+      : '<p>Tidak ada rincian aksesoris tambahan.</p>';
+    const selling = [
+      ['Harga Jual / Pcs','resHargaJual'],
+      ['Potongan Pajak','resPajakRp'],
+      ['Harga Jual Bersih','resNetSales'],
+      ['HPP / Modal per Pcs','resHppPcs'],
+      ['Laba Bersih / Pcs','resLabaPcs'],
+      ['Margin Bersih','resMargin'],
+      ['ROI Modal','resRoi'],
+      ['Total Laba Batch','resLabaTotal'],
+      ['Total Omzet Kotor','resOmzetKotor'],
+      ['Total Setoran Pajak','resPajakTotal']
+    ];
+    const sellingRows = selling.map(r=>'<tr><td>'+r[0]+'</td><td class="num">'+esc(txt(r[1]))+'</td></tr>').join('');
+    report.innerHTML =
+      '<h1>Laporan Perhitungan HPP Jeans</h1>'+
+      '<div class="pdf-sub">NEOMA · Dicetak '+esc(new Date().toLocaleString('id-ID'))+'</div>'+
+      '<div class="pdf-meta"><div><b>Model / Artikel</b><br>'+esc(nama)+'</div><div><b>Jumlah Produksi</b><br>'+esc(qty)+' pcs</div><div><b>Catatan</b><br>'+esc(catatan)+'</div><div><b>Basis perhitungan</b><br>Per pcs dan total batch</div></div>'+
+      '<h2>1. Rincian Modal Produksi</h2>'+
+      '<table><thead><tr><th>Komponen Biaya</th><th class="num">Per Pcs</th><th class="num">Total Batch</th></tr></thead><tbody>'+costRows+
+      '<tr class="total"><td>TOTAL HPP</td><td class="num">'+esc(txt('tblTotalPcs'))+'</td><td class="num">'+esc(txt('tblTotalTot'))+'</td></tr></tbody></table>'+
+      '<div class="pdf-kpis"><div class="pdf-kpi">HPP / Modal per Pcs<strong>'+esc(txt('kpiHppPcs'))+'</strong></div><div class="pdf-kpi">Total Modal Batch<strong>'+esc(txt('kpiHppTotal'))+'</strong></div></div>'+
+      '<h2>2. Detail Bahan dan Biaya</h2>'+
+      '<table><tbody><tr><td>Harga kain</td><td>'+esc(val('kainHarga'))+'</td><td>Pembelian</td><td>'+esc(val('kainBeli')+' '+val('kainSatuan'))+'</td></tr><tr><td>Total belanja kain</td><td>'+esc(txt('kainTotalText'))+'</td><td>Pemakaian rata-rata</td><td>'+esc(txt('kainPakaiText'))+'</td></tr><tr><td>Ongkos jahit</td><td>'+esc(txt('jahitPerPcsText'))+'</td><td>Total jahit</td><td>'+esc(txt('jahitTotalText'))+'</td></tr><tr><td>Biaya cucian</td><td>'+esc(val('cuciVal'))+'</td><td>Metode</td><td>'+esc(val('cuciMode'))+'</td></tr><tr><td>Biaya finishing</td><td>'+esc(val('finishVal'))+'</td><td>Metode</td><td>'+esc(val('finishMode'))+'</td></tr><tr><td>Biaya lainnya</td><td>'+esc(val('lainVal'))+'</td><td>Metode</td><td>'+esc(val('lainMode'))+'</td></tr></tbody></table>'+
+      '<h2>3. Rincian Aksesoris</h2>'+accessoriesTable+
+      '<h2>4. Harga Jual, Pajak dan Laba</h2>'+
+      '<table><tbody>'+sellingRows+'</tbody></table>'+
+      '<div class="pdf-note">Laporan ini dibuat dari data kalkulasi terakhir pada aplikasi Kalkulator HPP Neoma. Nilai per pcs dan total batch mengikuti metode perhitungan yang dipilih.</div>';
+    if (!report.parentNode) document.body.appendChild(report);
+  }
+
+  // Simpan PDF menggunakan laporan mandiri agar seluruh rincian berlanjut normal ke halaman berikutnya.
   function printOrSavePdf() {
     calculate();
     saveState();
+    buildNeomaPdfReport();
     if (window.NeomaPdf && typeof window.NeomaPdf.savePdf === 'function') {
       window.NeomaPdf.savePdf();
       return;
     }
-    // Fallback untuk browser biasa: gunakan dialog cetak browser.
     window.print();
   }
 
