@@ -548,10 +548,10 @@
     @media print {
       @page { size: A4; margin: 12mm; }
       html, body { background: #fff !important; padding: 0 !important; margin: 0 !important; }
-      /* Cetak hanya ringkasan HPP. Gunakan visibility pada elemen lain
-         agar aturan display tidak menghilangkan ancestor/isi ringkasan. */
-      body > .container > * { visibility: hidden !important; }
-      body > .container > .main-hpp-summary { visibility: visible !important; }
+      /* Sembunyikan elemen lain dengan display:none, bukan visibility:hidden.
+         visibility:hidden tetap menyisakan ruang layout dan menghasilkan halaman PDF kosong. */
+      body > .container > * { display: none !important; }
+      body > .container > .main-hpp-summary { display: block !important; visibility: visible !important; }
       body > .container > .main-hpp-summary,
       body > .container > .main-hpp-summary * { visibility: visible !important; }
       body > .container > .main-hpp-summary {
